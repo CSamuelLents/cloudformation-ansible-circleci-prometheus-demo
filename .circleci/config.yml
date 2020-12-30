@@ -8,15 +8,13 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      run:
-        - echo "Hello"
+      - run: echo "Hello"
 
   print_world:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      run:
-        - echo " world!"
+      - run: echo " world!"
 
 workflows:
   welcome:
@@ -25,5 +23,5 @@ workflows:
 
   hello_world:
     jobs:
-      - print_hello/run
-      - print_world/run
+      - print_hello
+      - print_world
