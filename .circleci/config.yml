@@ -33,6 +33,17 @@ jobs:
       - restore_cache:
           key: 'npm-packages'
       - run: npm audit
+
+workflows:
+  ci_flow:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - analyze:
+          requires:
+            - test
 #
 # commands:
 #   print_pipeline_id:
