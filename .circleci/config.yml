@@ -7,16 +7,18 @@ jobs:
     steps:
       - run: echo "Hello"
 
-  print_world:
+  print_env:
     docker:
       - image: circleci/node:13.8.0
+    environment:
+      - USER: 'Samuel'
     steps:
-      - run: echo " world!"
+      - run: echo " $USER!"
 
 workflows:
-  hello_world:
+  welcome:
     jobs:
       - print_hello
-      - print_world:
+      - print_env:
           requires:
             - print_hello
