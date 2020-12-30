@@ -34,6 +34,16 @@ jobs:
       - print_pipeline_id:
           id: << pipeline.id >>
 
+  fail:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: return 1
+      - run:
+          name: Upload Failed Tests
+          command: echo "Failure!"
+          when: on_fail
+
 workflows:
   use_workspaces:
     jobs:
@@ -41,6 +51,11 @@ workflows:
       - print_output_file:
           requires:
             - save_hello_world_output
+
   do_command:
     jobs:
       - do_pipeline_id_cmd
+
+  test_failure:
+    jobs:
+      - fail
