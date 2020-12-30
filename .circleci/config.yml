@@ -1,28 +1,26 @@
 version: 2.1
 
 jobs:
-  print_hello:
+  save_hello_world_output:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo "Hello"
+      - run: echo "Hello" >> output.txt
+      - persist_to_workspace:
+          root: /tmp
 
-  print_env:
+  print_output_file:
     docker:
       - image: circleci/node:13.8.0
-    environment:
-      - USER: 'Samuel'
     steps:
-      - run: echo " $USER!"
-      - run:
-          name: 'Echo an env var from the CircleCI project settings'
-          command: |
-            echo "And $ANOTHER_ENV_VAR"
+      - attach_workspace:
+          at: /tmp
+      - run: cat /tmp/output.txt
 
 workflows:
-  welcome:
+  use_workspaces:
     jobs:
-      - print_hello
-      - print_env:
+      - save_hello_world_output
+      - print_output_file:
           requires:
-            - print_hello
+            - save_hello_world_output
