@@ -4,7 +4,7 @@ commands:
   print_pipeline_id:
     parameters:
       id:
-        - type: string
+        type: string
     steps:
       - run: echo << parameters.id >>
 
