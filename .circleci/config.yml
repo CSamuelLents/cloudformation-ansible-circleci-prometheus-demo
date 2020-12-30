@@ -14,7 +14,10 @@ jobs:
       - USER: 'Samuel'
     steps:
       - run: echo " $USER!"
-      - run: echo "And $ANOTHER_ENV_VAR"
+      - run:
+        name: 'Echo an env var from the CircleCI project settings'
+        command: |
+          echo "And $ANOTHER_ENV_VAR"
 
 workflows:
   welcome:
