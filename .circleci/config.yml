@@ -9,7 +9,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp
           paths:
-            - /
+            - ./
 
   print_output_file:
     docker:
