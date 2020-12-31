@@ -1,18 +1,23 @@
 version: 2.1
 
 jobs:
-  create_infrastructure:
+  configure_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
-
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ['b2:4b:a1:40:4f:f6:ae:2f:5c:74:4d:18:94:16:b2:cf']
-      - run: apk add --update ansible
-      - run: ansible-playbook -i inventory.txt main.yml
+          fingerprints: ['06:7c:db:71:49:2f:03:36:60:08:d2:fd:33:6f:17:d3']
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible # install the dependencies needed for ansible
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt playbook.yml
 
 workflows:
-  ci_flow:
+  my_workflow:
     jobs:
-      - create_infrastructure
+      - configure_infrastructure
