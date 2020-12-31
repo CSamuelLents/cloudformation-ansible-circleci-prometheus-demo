@@ -9,7 +9,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ['b2:4b:a1:40:4f:f6:ae:2f:5c:74:4d:18:94:16:b2:cf']
-      - run: ansible-playbook main.yml -i inventory --verbose
+      - run: apk add --update ansible
+      - run: ansible-playbook -i inventory.txt main.yml
 
 workflows:
   ci_flow:
