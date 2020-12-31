@@ -1,0 +1,21 @@
+---
+- name: Create directory
+  file:
+    dest: ~/web
+    state: directory
+
+- name: Copy server script
+  copy:
+    src: index.js
+    dest: ~/web/index.js
+    mode: 0644
+    backup: yes
+
+- name: Copy pm2 config
+  copy:
+    src: ecosystem.config.js
+    dest: ~/web/ecosystem.config.js
+    backup: yes
+
+- name: Execute Node/Express server
+  shell: pm2 startOrGracefulReload ~/web/ecosystem.config.js
