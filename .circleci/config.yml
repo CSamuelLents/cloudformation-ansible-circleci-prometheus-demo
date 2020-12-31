@@ -10,10 +10,10 @@ jobs:
       - run: AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
       - run: |
           aws cloudformation create-stack \
-            --stack-name testing \
-            --template-body server.yml \
+            --stack-name "testing" \
+            --template-body "file://server.yml" \
             --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
-            --region us-east-1
+            --region "us-east-1"
 
 workflows:
   ci_flow:
