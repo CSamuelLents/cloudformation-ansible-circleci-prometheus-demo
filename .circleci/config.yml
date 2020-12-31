@@ -10,12 +10,10 @@ jobs:
           fingerprints: ['06:7c:db:71:49:2f:03:36:60:08:d2:fd:33:6f:17:d3']
       - run:
           name: Install dependencies
-          command: |
-            apk add --update ansible # install the dependencies needed for ansible
+          command: apk add --update ansible
       - run:
           name: Configure server
-          command: |
-            ansible-playbook -i inventory.txt playbook.yml
+          command: ansible-playbook -i inventory.txt playbook.yml
 
 workflows:
   my_workflow:
