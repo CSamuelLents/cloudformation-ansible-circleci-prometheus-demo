@@ -41,7 +41,9 @@ jobs:
           name: simulate error
           command: |
             return 1
-      - destroy_environment:
+      - run:
+          name: destroy on fail
+          command: destroy_environment
           when: on_fail
 
 workflows:
