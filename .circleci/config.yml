@@ -6,7 +6,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: |
+      - run: >
           aws cloudformation create-stack \
             --stack-name test-stack \
             --template-body server.yml \
