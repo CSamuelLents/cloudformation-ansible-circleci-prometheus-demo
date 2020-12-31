@@ -2,9 +2,6 @@ version: 2.1
 
 commands:
   destroy_environment:
-    parameters:
-      when:
-        type: string
     steps:
       - run:
           name: Destroy environment
@@ -28,11 +25,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: simulate error
+          name: Simulate error
           command: |
             return 1
       - destroy_environment:
-          when: on_fail
+        when: on_fail
 
 workflows:
   my_workflow:
