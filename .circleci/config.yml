@@ -26,10 +26,9 @@ jobs:
       - checkout
       - run:
           name: Simulate error
-          command: |
-            return 1
+          command: npm i
       - destroy_environment:
-        when: on_fail
+          when: on_fail
 
 workflows:
   my_workflow:
