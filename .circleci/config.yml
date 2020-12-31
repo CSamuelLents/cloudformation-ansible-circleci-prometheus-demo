@@ -1,6 +1,6 @@
 version: 2.1
 
-commands:
+command:
   destroy_environment:
     steps:
       - run:
@@ -18,6 +18,27 @@ jobs:
           aws cloudformation deploy \
             --stack-name prod-${CIRCLE_WORKFLOW_ID} \
             --template-file server.yml
+
+  smoke_test:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: simulate error
+          command: |
+            return 1
+      - destroy_environment:
+          when: on_fail
+
+workflows:
+  my_workflow:
+    jobs:
+      - configure_infrastructure
+      - smoke_test:
+          requires:
+            - configure_infrastructure
+
   # configure_infrastructure:
   #   docker:
   #     - image: python:3.7-alpine3.11
@@ -31,25 +52,3 @@ jobs:
   # - run:
   #     name: Configure server
   #     command: ansible-playbook -i inventory.txt playbook.yml
-
-  smoke_test:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: simulate error
-          command: |
-            return 1
-      - run:
-          name: destroy on fail
-          command: destroy_environment
-          when: on_fail
-
-workflows:
-  my_workflow:
-    jobs:
-      - configure_infrastructure
-      - smoke_test:
-          requires:
-            - configure_infrastructure
