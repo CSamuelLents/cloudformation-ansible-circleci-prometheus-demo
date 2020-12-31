@@ -15,6 +15,18 @@ jobs:
           name: Configure server
           command: ansible-playbook -i inventory.txt playbook.yml
 
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      run: |
+        if curl -s --head "https://google333.com"
+        then
+          return 0
+        else
+          return 1
+        fi
+
 workflows:
   my_workflow:
     jobs:
