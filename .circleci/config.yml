@@ -21,13 +21,14 @@ jobs:
 
   smoke_test:
     docker:
-      - image: amazon/aws-cli
+      - image: alpine:latest
     steps:
       - checkout
       - run:
           name: Simulate error
           command: npm i
-      - destroy_environment:
+      - run:
+          command: destroy_environment
           when: on_fail
 
 workflows:
