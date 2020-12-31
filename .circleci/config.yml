@@ -6,8 +6,8 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+      - run: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+      - run: AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
       - run: |
           aws cloudformation create-stack \
             --stack-name testing \
