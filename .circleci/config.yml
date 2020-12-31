@@ -6,14 +6,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-      - run: AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
       - run: |
-          aws cloudformation create-stack \
-            --stack-name "testing" \
-            --template-body "file://server.yml" \
-            --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
-            --region "us-east-1"
+          aws cloudformation deploy \
+            --stack-name testing \
+            --template-file server.yml
 
 workflows:
   ci_flow:
