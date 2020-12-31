@@ -1,49 +1,22 @@
 version: 2.1
 
-executors:
-  default:
-    docker:
-      - image: circleci/node:13.8.0
-
 jobs:
-  build:
-    executor: default
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - run: npm i
-      - save_cache:
-          paths:
-            - /src/node_modules
-          key: 'npm-packages'
-      - run: npm run type-check
-
-  test:
-    executor: default
-    steps:
-      - checkout
-      - restore_cache:
-          key: 'npm-packages'
-      - run: npm i
-      - run: npm run test
-
-  analyze:
-    executor: default
-    steps:
-      - checkout
-      - restore_cache:
-          key: 'npm-packages'
-      - run: npm audit
+      - run: |
+          aws cloudformation create-stack \
+            --stack-name test-stack \
+            --template-body server.yml \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --region=us-west-1
 
 workflows:
   ci_flow:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - analyze:
-          requires:
-            - test
+      - create_infrastructure
 #
 # commands:
 #   print_pipeline_id:
@@ -104,3 +77,108 @@ workflows:
 #   test_failure:
 #     jobs:
 #       - fail
+
+# executors:
+#   default:
+#     docker:
+#       - image: circleci/node:13.8.0
+
+# jobs:
+#   build:
+#     executor: default
+#     steps:
+#       - checkout
+#       - run: npm i
+#       - save_cache:
+#           paths:
+#             - /src/node_modules
+#           key: 'npm-packages'
+#       - run: npm run type-check
+
+#   test:
+#     executor: default
+#     steps:
+#       - checkout
+#       - restore_cache:
+#           key: 'npm-packages'
+#       - run: npm i
+#       - run: npm run test
+
+#   analyze:
+#     executor: default
+#     steps:
+#       - checkout
+#       - restore_cache:
+#           key: 'npm-packages'
+#       - run: npm audit
+
+# workflows:
+#   ci_flow:
+#     jobs:
+#       - build
+#       - test:
+#           requires:
+#             - build
+#       - analyze:
+#           requires:
+#             - test
+# #
+# # commands:
+# #   print_pipeline_id:
+# #     parameters:
+# #       id:
+# #         type: string
+# #     steps:
+# #       - run: echo << parameters.id >>
+
+# # jobs:
+# #   save_hello_world_output:
+# #     docker:
+# #       - image: circleci/node:13.8.0
+# #     steps:
+# #       - run: echo "Hello" >> /tmp/output.txt
+# #       - persist_to_workspace:
+# #           root: /tmp
+# #           paths:
+# #             - output.txt
+
+# #   print_output_file:
+# #     docker:
+# #       - image: circleci/node:13.8.0
+# #     steps:
+# #       - attach_workspace:
+# #           at: /tmp
+# #       - run: cat /tmp/output.txt
+
+# #   do_pipeline_id_cmd:
+# #     docker:
+# #       - image: circleci/node:13.8.0
+# #     steps:
+# #       - print_pipeline_id:
+# #           id: << pipeline.id >>
+
+# #   fail:
+# #     docker:
+# #       - image: circleci/node:13.8.0
+# #     steps:
+# #       - run: return 1
+# #       - run:
+# #           name: Upload Failed Tests
+# #           command: echo "Failure!"
+# #           when: on_fail
+
+# # workflows:
+# #   use_workspaces:
+# #     jobs:
+# #       - save_hello_world_output
+# #       - print_output_file:
+# #           requires:
+# #             - save_hello_world_output
+
+# #   do_command:
+# #     jobs:
+# #       - do_pipeline_id_cmd
+
+# #   test_failure:
+# #     jobs:
+# #       - fail
