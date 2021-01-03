@@ -37,7 +37,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: ["frontend-dependencies-{{ checksum 'frontend/package-lock.json' }}"]
+          keys:
+            - frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+            - frontend-dependencies
       - run:
           name: Install dependencies
           command: |
@@ -47,7 +49,7 @@ jobs:
           command: |
             npm --prefix ./frontend run build
       - save_cache:
-          key: "frontend-dependencies-{{ checksum 'frontend/package-lock.json' }}"
+          key: frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
           paths:
             - frontend/node_modules
 
@@ -57,7 +59,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: ["backend-dependencies-{{ checksum 'backend/package-lock.json' }}"]
+          keys:
+            - backend-dependencies-{{ checksum "backend/package-lock.json" }}
+            - backend-dependencies
       - run:
           name: Install dependencies
           command: |
@@ -67,7 +71,7 @@ jobs:
           command: |
             npm --prefix ./backend run build
       - save_cache:
-          key: "backend-dependencies-{{ checksum 'backend/package-lock.json' }}"
+          key: backend-dependencies-{{ checksum "backend/package-lock.json" }}
           paths:
             - backend/node_modules
 
