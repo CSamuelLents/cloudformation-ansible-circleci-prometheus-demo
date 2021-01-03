@@ -127,21 +127,53 @@ jobs:
           paths:
             - backend/node_modules
 
-#   scan-frontend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+  scan-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+            - frontend-dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            set -e
+            npm --prefix ./frontend install
+      - run:
+          name: Scan frontend for vulnerabilities
+          command: |
+            set -e
+            npm --prefix ./frontend audit --audit-level=critical
+      - save_cache:
+          key: frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+          paths:
+            - frontend/node_modules
 
-#   scan-backend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - backend-dependencies-{{ checksum "backend/package-lock.json" }}
+            - backend-dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            set -e
+            npm --prefix ./backend install
+      - run:
+          name: Scan backend for vulnerabilities
+          command: |
+            set -e
+            npm --prefix ./backend audit --audit-level=critical
+      - save_cache:
+          key: backend-dependencies-{{ checksum "backend/package-lock.json" }}
+          paths:
+            - backend/node_modules
 
 #   deploy-infrastructure:
 #     docker:
