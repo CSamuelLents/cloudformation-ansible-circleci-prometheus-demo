@@ -110,7 +110,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
       salaryType: SalaryType.YEARLY,
       effectiveDate: new Date(),
     });
-  }
+  };
 
   handleFormReset = async () => {
     const answer = await confirmDialog.fire({
@@ -126,7 +126,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
       this.clearFields();
       this.goBackToEmployees();
     }
-  }
+  };
 
   handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     const node = this.myRef.current;
@@ -164,27 +164,27 @@ class AddEmployee extends Component<AddEmployee.Props> {
     };
 
     await this.props.actions.addEmployee(payload);
-  }
+  };
 
   handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       ...this.state,
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
   handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     this.setState({
       ...this.state,
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
   handleTextAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     this.setState({
       address: event.target.value,
     });
-  }
+  };
 
   handleBirthdateChanged(date: Date) {
     this.setState({
@@ -221,7 +221,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
     this.setState({
       salaryType: event.target.value,
     });
-  }
+  };
 
   containerStyle: React.CSSProperties = {
     textAlign: 'center',
@@ -233,7 +233,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
 
   goBackToEmployees = () => {
     this.props.history.push('/employees');
-  }
+  };
 
   thirdLevelBreadcrumb: React.CSSProperties = {
     cursor: 'default',
@@ -248,15 +248,15 @@ class AddEmployee extends Component<AddEmployee.Props> {
         isFetching={isFetching}
         searchText={searchText}
         onSearchChange={this.handleSearch}
-        placeholder='Search in the app'
-        title='General Search'
+        placeholder="Search in the app"
+        title="General Search"
       />
     );
     return (
       <div className={`${style['g-container']} ${style.fluid}`}>
         <SearchBar searchInput={generalSearch} />
         <div className={`${style['g-sectionbar']} ${style['grid-x']}`}>
-          <Breadcrumb rootPathName='Add a New Employee' isSecondaryPage={true}>
+          <Breadcrumb rootPathName="Add a New Employee" isSecondaryPage={true}>
             <li>
               <a onClick={this.handleFormReset}>Employees</a>
             </li>
@@ -274,23 +274,23 @@ class AddEmployee extends Component<AddEmployee.Props> {
             <div className={style['button-group']}>
               <Button
                 className={`${style.button} ${style.secondary} ${style.clear}`}
-                title='Cancel'
+                title="Cancel"
                 onClick={this.handleFormReset}
               >
                 <i
                   className={`${style.icon} ${style['i-cancel']} ${style['margin-right']}`}
-                  aria-hidden='true'
+                  aria-hidden="true"
                 />
                 Cancel
               </Button>
               <Button
                 className={`${style.button} ${style.secondary} ${style.shaddy}`}
-                title='Add Employee'
+                title="Add Employee"
                 onClick={this.handleFormSubmit}
               >
                 <i
                   className={`${style.icon} ${style['i-check']} ${style['margin-right']}`}
-                  aria-hidden='true'
+                  aria-hidden="true"
                 />
                 Add Employee
               </Button>
@@ -305,7 +305,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
           <form
             ref={this.myRef}
             onSubmit={this.handleFormSubmit}
-            autoComplete='off'
+            autoComplete="off"
           >
             <div
               className={`${style['g-main']} ${style['grid-x']} ${style['grid-margin-x']}`}
@@ -325,26 +325,26 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   value={this.state.tags}
                   onChange={this.handleTagsChange.bind(this)}
                 />
-                <small className='medium-gray'>Press tab to create tags.</small>
+                <small className="medium-gray">Press tab to create tags.</small>
               </div>
 
               <div
                 className={`${style.cell} ${style['medium-6']} ${style['large-6']}`}
               >
                 <div className={style['input-cell']}>
-                  <label htmlFor='displayname' className={style.required}>
+                  <label htmlFor="displayname" className={style.required}>
                     Display Name
                   </label>
                   <input
-                    type='text'
-                    name='displayName'
-                    id='displayname'
+                    type="text"
+                    name="displayName"
+                    id="displayname"
                     value={this.state.displayName}
                     onChange={this.handleTextChange}
                     onBlur={this.handleTextChange}
                     maxLength={50}
-                    className='largeinput'
-                    placeholder='Display Name'
+                    className="largeinput"
+                    placeholder="Display Name"
                     required
                   />
                 </div>
@@ -353,13 +353,13 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label htmlFor='firstname' className={style.required}>
+                      <label htmlFor="firstname" className={style.required}>
                         First Name
                       </label>
                       <input
-                        type='text'
-                        name='firstName'
-                        id='firstname'
+                        type="text"
+                        name="firstName"
+                        id="firstname"
                         value={this.state.firstName}
                         onChange={this.handleTextChange}
                         onBlur={this.handleTextChange}
@@ -373,11 +373,11 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label htmlFor='middlename'>Middle name</label>
+                      <label htmlFor="middlename">Middle name</label>
                       <input
-                        type='text'
-                        name='middleName'
-                        id='middlename'
+                        type="text"
+                        name="middleName"
+                        id="middlename"
                         value={this.state.middleName}
                         onChange={this.handleTextChange}
                         onBlur={this.handleTextChange}
@@ -392,13 +392,13 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label htmlFor='lastname' className={style.required}>
+                      <label htmlFor="lastname" className={style.required}>
                         Last Name
                       </label>
                       <input
-                        type='text'
-                        name='lastName'
-                        id='lastname'
+                        type="text"
+                        name="lastName"
+                        id="lastname"
                         value={this.state.lastName}
                         onChange={this.handleTextChange}
                         onBlur={this.handleTextChange}
@@ -411,11 +411,11 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label htmlFor='secondlastname'>Second Last Name</label>
+                      <label htmlFor="secondlastname">Second Last Name</label>
                       <input
-                        type='text'
-                        name='secondLastName'
-                        id='secondlastname'
+                        type="text"
+                        name="secondLastName"
+                        id="secondlastname"
                         value={this.state.secondLastName}
                         onChange={this.handleTextChange}
                         onBlur={this.handleTextChange}
@@ -429,12 +429,12 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['medium-6']} ${style['large-6']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='gender' className={style.required}>
+                    <label htmlFor="gender" className={style.required}>
                       Gender
                     </label>
                     <select
-                      name='gender'
-                      id='gender'
+                      name="gender"
+                      id="gender"
                       onChange={this.handleSelectChange}
                       onBlur={this.handleSelectChange}
                       value={this.state.gender}
@@ -453,12 +453,12 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['small-12']} ${style['medium-8']} ${style['large-4']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='startDate' className={style.required}>
+                    <label htmlFor="startDate" className={style.required}>
                       Start Date
                     </label>
                     <DatePicker
-                      name='startDate'
-                      id='startdate'
+                      name="startDate"
+                      id="startdate"
                       selected={this.state.startDate}
                       onChange={this.handleStartDateChanged.bind(this)}
                     />
@@ -468,17 +468,17 @@ class AddEmployee extends Component<AddEmployee.Props> {
                 <h5 style={this.textStyle}>Salary</h5>
                 <div className={style['input-cell']}>
                   <input
-                    type='radio'
+                    type="radio"
                     value={SalaryType.YEARLY}
-                    name='yearlySalary'
+                    name="yearlySalary"
                     checked={this.state.salaryType === SalaryType.YEARLY}
                     onChange={this.handleSalaryTypeChange}
                   />
                   <label>Yearly</label>
                   <input
-                    type='radio'
+                    type="radio"
                     value={SalaryType.HOURLY}
-                    name='hourlySalary'
+                    name="hourlySalary"
                     checked={this.state.salaryType === SalaryType.HOURLY}
                     onChange={this.handleSalaryTypeChange}
                   />
@@ -490,19 +490,19 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label htmlFor='salary' className={style.required}>
+                      <label htmlFor="salary" className={style.required}>
                         Set amount
                       </label>
                       <div className={style['input-group']}>
                         <span className={style['input-group-label']}>$</span>
                         <input
-                          type='number'
-                          name='salary'
-                          id='salary'
+                          type="number"
+                          name="salary"
+                          id="salary"
                           value={this.state.salary}
                           onChange={this.handleTextChange}
-                          min='0.01'
-                          step='0.01'
+                          min="0.01"
+                          step="0.01"
                         />
                         <label className={style['medium-gray']}>
                           {this.state.salaryType === SalaryType.HOURLY
@@ -516,12 +516,12 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   <div
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
-                    <label htmlFor='effectiveDate' className={style.required}>
+                    <label htmlFor="effectiveDate" className={style.required}>
                       Effective Date
                     </label>
                     <DatePicker
-                      name='effectiveDate'
-                      id='effectiveDate'
+                      name="effectiveDate"
+                      id="effectiveDate"
                       selected={this.state.effectiveDate}
                       onChange={this.handleEffectiveDateChanged.bind(this)}
                       required
@@ -534,20 +534,20 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['medium-8']} ${style['large-6']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='email' className={style.required}>
+                    <label htmlFor="email" className={style.required}>
                       Email
                     </label>
                     <input
-                      type='email'
-                      name='companyEmail'
-                      id='email'
+                      type="email"
+                      name="companyEmail"
+                      id="email"
                       value={this.state.companyEmail}
                       onChange={this.handleTextChange}
                       onBlur={this.handleTextChange}
                       required
                       maxLength={50}
-                      placeholder='Organization email address'
-                      pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
+                      placeholder="Organization email address"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                     />
                   </div>
                 </div>
@@ -556,17 +556,17 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['medium-8']} ${style['large-6']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='personalEmail'>Personal email</label>
+                    <label htmlFor="personalEmail">Personal email</label>
                     <input
-                      type='email'
-                      name='personalEmail'
-                      id='personalemail'
+                      type="email"
+                      name="personalEmail"
+                      id="personalemail"
                       value={this.state.personalEmail}
                       onChange={this.handleTextChange}
                       onBlur={this.handleTextChange}
                       maxLength={50}
-                      placeholder='Personal/Alternative email address'
-                      pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
+                      placeholder="Personal/Alternative email address"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                     />
                   </div>
                 </div>
@@ -575,16 +575,16 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['medium-8']} ${style['large-6']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='phoneNumber'>Phone number</label>
+                    <label htmlFor="phoneNumber">Phone number</label>
                     <input
-                      type='tel'
-                      name='phoneNumber'
-                      id='phonenumber'
+                      type="tel"
+                      name="phoneNumber"
+                      id="phonenumber"
                       value={this.state.phoneNumber}
                       onChange={this.handleTextChange}
                       onBlur={this.handleTextChange}
                       maxLength={50}
-                      placeholder='Enter a valid phone number'
+                      placeholder="Enter a valid phone number"
                     />
                   </div>
                 </div>
@@ -593,10 +593,10 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   className={`${style.cell} ${style['small-12']} ${style['medium-8']} ${style['large-4']}`}
                 >
                   <div className={style['input-cell']}>
-                    <label htmlFor='birthdate'>Birthday</label>
+                    <label htmlFor="birthdate">Birthday</label>
                     <DatePicker
-                      name='birthdate'
-                      id='birthdate'
+                      name="birthdate"
+                      id="birthdate"
                       selected={this.state.birthdate}
                       onChange={this.handleBirthdateChanged.bind(this)}
                     />
@@ -605,11 +605,11 @@ class AddEmployee extends Component<AddEmployee.Props> {
 
                 <h5 style={this.textStyle}>Bank Information</h5>
                 <div>
-                  <label htmlFor='bankName'>Bank name</label>
+                  <label htmlFor="bankName">Bank name</label>
                   <input
-                    type='text'
-                    name='bankName'
-                    id='bankname'
+                    type="text"
+                    name="bankName"
+                    id="bankname"
                     value={this.state.bankName}
                     onChange={this.handleTextChange}
                     onBlur={this.handleTextChange}
@@ -617,11 +617,11 @@ class AddEmployee extends Component<AddEmployee.Props> {
                   />
                 </div>
                 <div>
-                  <label htmlFor='accountNumber'>Account number</label>
+                  <label htmlFor="accountNumber">Account number</label>
                   <input
-                    type='text'
-                    name='accountNumber'
-                    id='accountnumber'
+                    type="text"
+                    name="accountNumber"
+                    id="accountnumber"
                     value={this.state.accountNumber}
                     onChange={this.handleTextChange}
                     onBlur={this.handleTextChange}
@@ -633,10 +633,10 @@ class AddEmployee extends Component<AddEmployee.Props> {
                 <div
                   className={`${style.cell} ${style['small-12']} ${style['medium-8']} ${style['large-9']}`}
                 >
-                  <label htmlFor='addressLine'>Address line</label>
+                  <label htmlFor="addressLine">Address line</label>
                   <textarea
-                    name='addressLine'
-                    id='addressline'
+                    name="addressLine"
+                    id="addressline"
                     value={this.state.address}
                     onChange={this.handleTextAreaChange}
                     onBlur={this.handleTextAreaChange}
@@ -650,7 +650,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
                       className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                     >
                       <div className={style['input-cell']}>
-                        <label className={style.required} htmlFor='country'>
+                        <label className={style.required} htmlFor="country">
                           Country
                         </label>
                         <CountryDropdown
@@ -664,7 +664,7 @@ class AddEmployee extends Component<AddEmployee.Props> {
                       className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                     >
                       <div className={style['input-cell']}>
-                        <label className={style.required} htmlFor='region'>
+                        <label className={style.required} htmlFor="region">
                           State/Province
                         </label>
                         <RegionDropdown
@@ -681,13 +681,13 @@ class AddEmployee extends Component<AddEmployee.Props> {
                     className={`${style.cell} ${style['small-12']} ${style['medium-6']}`}
                   >
                     <div className={style['input-cell']}>
-                      <label className={style.required} htmlFor='city'>
+                      <label className={style.required} htmlFor="city">
                         City
                       </label>
                       <input
-                        type='text'
-                        name='city'
-                        id='city'
+                        type="text"
+                        name="city"
+                        id="city"
                         value={this.state.city}
                         onChange={this.handleTextChange}
                         onBlur={this.handleTextChange}
@@ -722,7 +722,4 @@ function mapActionsToProps(
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapActionsToProps,
-)(AddEmployee as any);
+export default connect(mapStateToProps, mapActionsToProps)(AddEmployee as any);

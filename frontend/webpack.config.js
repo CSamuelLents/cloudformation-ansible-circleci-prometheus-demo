@@ -63,13 +63,6 @@ module.exports = {
                 localIdentName: '[local]__[hash:base64:5]',
               },
             },
-            // query: {
-            //   modules: true,
-            //   sourceMap: !isProduction,
-            //   importLoaders: 1,
-            //   localIdentName: isProduction ?
-            //     "[hash:base64:5]" : "[local]__[hash:base64:5]"
-            // }
           },
           {
             loader: 'postcss-loader',
@@ -100,11 +93,11 @@ module.exports = {
           isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
-            query: {
-              modules: false,
-              sourceMap: !isProduction,
-              importLoaders: 1,
-            },
+            // query: {
+            //   modules: false,
+            //   sourceMap: !isProduction,
+            //   importLoaders: 1,
+            // },
           },
         ],
       },
@@ -132,23 +125,23 @@ module.exports = {
       },
     ],
   },
-  optimization: {
-    splitChunks: {
-      name: true,
-      cacheGroups: {
-        commons: {
-          chunks: 'initial',
-          minChunks: 2,
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          chunks: 'all',
-          priority: -10,
-        },
-      },
-    },
-    runtimeChunk: true,
-  },
+  // optimization: {
+  // splitChunks: {
+  //   name: true,
+  //   cacheGroups: {
+  //     commons: {
+  //       chunks: 'initial',
+  //       minChunks: 2,
+  //     },
+  //     vendors: {
+  //       test: /[\\/]node_modules[\\/]/,
+  //       chunks: 'all',
+  //       priority: -10,
+  //     },
+  //   },
+  // },
+  // runtimeChunk: true,
+  // },
   plugins: [
     new Dotenv(),
     new webpack.EnvironmentPlugin({
@@ -157,7 +150,7 @@ module.exports = {
       API_URL: process.env.API_URL,
       WP_HELP_EMAIL: 'info@acklenavenue.com',
     }),
-    new WebpackCleanupPlugin(),
+    // new WebpackCleanupPlugin(),
     new MiniCssExtractPlugin({
       filename: '[contenthash].css',
       disable: !isProduction,
@@ -184,10 +177,4 @@ module.exports = {
   },
   // https://webpack.js.org/configuration/devtool/
   devtool: isProduction ? 'hidden-source-map' : 'inline-source-map',
-  node: {
-    // workaround for webpack-dev-server issue
-    // https://github.com/webpack/webpack-dev-server/issues/60#issuecomment-103411179
-    fs: 'empty',
-    net: 'empty',
-  },
 };
