@@ -65,12 +65,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
   build-backend:
     <<: *defaults
@@ -98,12 +96,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
   test-frontend:
     <<: *defaults
@@ -127,12 +123,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
   test-backend:
     <<: *defaults
@@ -156,12 +150,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
   scan-frontend:
     <<: *defaults
@@ -185,12 +177,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
   scan-backend:
     <<: *defaults
@@ -214,12 +204,10 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-          context: 'Slack Integration'
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
           branch_pattern: main
-          context: 'Slack Integration'
 
 #   deploy-infrastructure:
 #     docker:
@@ -393,12 +381,16 @@ workflows:
       - build-backend
       - test-frontend:
           requires: [build-frontend]
+          context: 'Slack Integration'
       - test-backend:
           requires: [build-backend]
+          context: 'Slack Integration'
       - scan-frontend:
           requires: [build-frontend]
+          context: 'Slack Integration'
       - scan-backend:
           requires: [build-backend]
+          context: 'Slack Integration'
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
