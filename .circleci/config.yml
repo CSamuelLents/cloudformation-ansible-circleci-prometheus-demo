@@ -377,8 +377,10 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+      - build-frontend:
+          context: 'Slack Integration'
+      - build-backend:
+          context: 'Slack Integration'
       - test-frontend:
           requires: [build-frontend]
           context: 'Slack Integration'
