@@ -4,4 +4,4 @@ You are leading a team to develop the UdaPeople product, a revolutionary concept
 
 The deliverable should be “near-production-quality”, but you should try to time-box your work to about 30 minutes. In other words, it should be good enough to submit to a real boss in a real job. No messy, last-minute submissions. You may use public domain or open source templates and graphics if you’d like. But please make sure the content is your own. Your presentation should be no longer than 5 slides. Your boss likes presentations that are short and sweet!
 
-Your presentation should be in PDF format named "presentation.pdf" and should be included in your code repository root folder. 
+Your presentation should be in PDF format named "presentation.pdf" and should be included in your code repository root folder.

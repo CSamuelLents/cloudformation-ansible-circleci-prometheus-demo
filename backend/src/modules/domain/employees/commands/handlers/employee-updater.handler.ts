@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as moment from 'moment-timezone';
 import { BaseCommandHandler } from '../../../../common/commands';
 import { UpdateEmployee } from '../update-employee.command';

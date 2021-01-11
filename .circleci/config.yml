@@ -1,5 +1,10 @@
 version: 2.1
 
+defaults: &defaults
+  working_directory: ~/app
+  docker:
+    - image: circleci/node:13.8.0
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -32,14 +37,12 @@ commands:
 
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
-            - frontend-dependencies
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}-{{ checksum "frontend/package.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -51,19 +54,17 @@ jobs:
             set -e
             npm --prefix ./frontend run build
       - save_cache:
-          key: frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
           paths:
             - frontend/node_modules
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - backend-dependencies-{{ checksum "backend/package-lock.json" }}
-            - backend-dependencies
+            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -75,19 +76,17 @@ jobs:
             set -e
             npm --prefix ./backend run build
       - save_cache:
-          key: backend-dependencies-{{ checksum "backend/package-lock.json" }}
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
           paths:
             - backend/node_modules
 
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
-            - frontend-dependencies
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -99,19 +98,17 @@ jobs:
             set -e
             npm --prefix ./frontend run test
       - save_cache:
-          key: frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
           paths:
             - frontend/node_modules
 
   test-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - backend-dependencies-{{ checksum "backend/package-lock.json" }}
-            - backend-dependencies
+            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -123,19 +120,17 @@ jobs:
             set -e
             npm --prefix ./backend run test
       - save_cache:
-          key: backend-dependencies-{{ checksum "backend/package-lock.json" }}
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
           paths:
             - backend/node_modules
 
   scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
-            - frontend-dependencies
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -147,19 +142,17 @@ jobs:
             set -e
             npm --prefix ./frontend audit --audit-level=critical
       - save_cache:
-          key: frontend-dependencies-{{ checksum "frontend/package-lock.json" }}
+          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
           paths:
             - frontend/node_modules
 
   scan-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - backend-dependencies-{{ checksum "backend/package-lock.json" }}
-            - backend-dependencies
+            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -171,7 +164,7 @@ jobs:
             set -e
             npm --prefix ./backend audit --audit-level=critical
       - save_cache:
-          key: backend-dependencies-{{ checksum "backend/package-lock.json" }}
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
           paths:
             - backend/node_modules
 
