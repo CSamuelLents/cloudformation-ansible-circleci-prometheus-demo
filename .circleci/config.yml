@@ -5,6 +5,9 @@ defaults: &defaults
   docker:
     - image: circleci/node:13.8.0
 
+orbs:
+  slack: circleci/slack@4.2.0
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -42,7 +45,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - frontend-deps-{{ checksum "frontend/package-lock.json" }}-{{ checksum "frontend/package.json" }}
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -57,6 +60,13 @@ jobs:
           key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
           paths:
             - frontend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   build-backend:
     <<: *defaults
@@ -64,7 +74,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -76,9 +86,16 @@ jobs:
             set -e
             npm --prefix ./backend run build
       - save_cache:
-          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}
           paths:
             - backend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   test-frontend:
     <<: *defaults
@@ -93,14 +110,17 @@ jobs:
             set -e
             npm --prefix ./frontend install
       - run:
-          name: Build front-end
+          name: Front-end tests
           command: |
             set -e
             npm --prefix ./frontend run test
-      - save_cache:
-          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
-          paths:
-            - frontend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   test-backend:
     <<: *defaults
@@ -108,7 +128,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -119,10 +139,13 @@ jobs:
           command: |
             set -e
             npm --prefix ./backend run test
-      - save_cache:
-          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
-          paths:
-            - backend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   scan-frontend:
     <<: *defaults
@@ -141,10 +164,13 @@ jobs:
           command: |
             set -e
             npm --prefix ./frontend audit --audit-level=critical
-      - save_cache:
-          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
-          paths:
-            - frontend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   scan-backend:
     <<: *defaults
@@ -152,7 +178,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
           name: Install dependencies
           command: |
@@ -163,10 +189,13 @@ jobs:
           command: |
             set -e
             npm --prefix ./backend audit --audit-level=critical
-      - save_cache:
-          key: backend-deps-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/package.json" }}
-          paths:
-            - backend/node_modules
+      - slack/notify:
+          event: fail
+          mentions: '@here'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 #   deploy-infrastructure:
 #     docker:
