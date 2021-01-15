@@ -65,10 +65,6 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-          branch_pattern: main
 
   build-backend:
     <<: *defaults
@@ -96,10 +92,6 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-          branch_pattern: main
 
   test-frontend:
     <<: *defaults
@@ -122,10 +114,6 @@ jobs:
           event: fail
           mentions: '@here'
           template: basic_fail_1
-          branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
           branch_pattern: main
 
   test-backend:
@@ -150,10 +138,6 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-          branch_pattern: main
 
   scan-frontend:
     <<: *defaults
@@ -176,10 +160,6 @@ jobs:
           event: fail
           mentions: '@here'
           template: basic_fail_1
-          branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
           branch_pattern: main
 
   scan-backend:
@@ -204,44 +184,40 @@ jobs:
           mentions: '@here'
           template: basic_fail_1
           branch_pattern: main
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-          branch_pattern: main
 
-#   deploy-infrastructure:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Ensure back-end infrastructure exists
-#           command: |
-#             aws cloudformation deploy \
-#               --template-file .circleci/files/backend.yml \
-#               #--tags project=your-tag \
-#               # --stack-name "your back-end stack name with workflow id" \
-#               # --parameter-overrides ID="your workflow id"
-#               exit 1
-#       - run:
-#           name: Ensure front-end infrastructure exist
-#           command: |
-#             aws cloudformation deploy \
-#               --template-file .circleci/files/frontend.yml \
-#               #--tags project=your-tag \
-#               # --stack-name "your front-end stack name with workflow id" \
-#               # --parameter-overrides ID="your workflow id"
-#               exit 1
-#       - run:
-#           name: Add back-end ip to ansible inventory
-#           command: |
-#             # Your code here
-#             exit 1
-#       - persist_to_workspace:
-#           root: ~/
-#           paths:
-#             - project/.circleci/ansible/inventory.txt
-#       # Here's where you will add some code to rollback on failure
+  deploy-infrastructure:
+    docker:
+      image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              #--tags project=your-tag \
+              --stack-name "udapeople-backend-kamsndfoaasdf9082" \
+              --parameter-overrides ID="kamsndfoaasdf9082"
+            exit 1
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              #--tags project=your-tag \
+              --stack-name "udapeople-frontend-kamsndfoaasdf9082" \
+              --parameter-overrides ID="kamsndfoaasdf9082"
+            exit 1
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            # Your code here
+            exit 1
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      # Here's where you will add some code to rollback on failure
 
 #   configure-infrastructure:
 #     docker:
