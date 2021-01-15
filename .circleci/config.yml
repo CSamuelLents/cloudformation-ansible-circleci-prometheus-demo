@@ -187,7 +187,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      image: amazon/aws-cli
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
@@ -195,7 +195,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              #--tags project=your-tag \
+              --tags project="udapeople" \
               --stack-name "udapeople-backend-kamsndfoaasdf9082" \
               --parameter-overrides ID="kamsndfoaasdf9082"
             exit 1
@@ -204,7 +204,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              #--tags project=your-tag \
+              --tags project="udapeople" \
               --stack-name "udapeople-frontend-kamsndfoaasdf9082" \
               --parameter-overrides ID="kamsndfoaasdf9082"
             exit 1
