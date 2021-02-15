@@ -209,8 +209,17 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            # Your code here
-            exit 1
+            BACKEND_IP=$(aws ec2 describe-instances \
+              --query "Reservations[*].Instances[*].{PublicIP:PublicIpAddress}"  \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text)
+
+            cat "$BACKEND_IP" >> .circleci/ansible/inventory.txt
+
+            curl -H "Content-Type: text/plain" \
+              -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
+              --request PUT \
+              --data "$BACKEND_IP" https://api.memstash.io/values/backend-ip
       - persist_to_workspace:
           root: ~/
           paths:
@@ -266,7 +275,8 @@ jobs:
 #           name: Get backend url
 #           command: |
 #             # your code here
-#             export API_URL="http://${BACKEND_IP}:3030"
+#             export API_URL=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
+#                --request GET https://api.memstash.io/values/backend-ip)
 #             echo "${API_URL}"
 #       - run:
 #           name: Deploy frontend objects
