@@ -197,7 +197,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project="udapeople" \
               --stack-name "udapeople-backend-kamsndfoaasdf9082" \
-              --parameter-overrides ID="kamsndfoaasdf9082"
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
             exit 1
       - run:
           name: Ensure front-end infrastructure exist
@@ -206,7 +206,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project="udapeople" \
               --stack-name "udapeople-frontend-kamsndfoaasdf9082" \
-              --parameter-overrides ID="kamsndfoaasdf9082"
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
             exit 1
       - run:
           name: Add back-end ip to ansible inventory
@@ -371,9 +371,9 @@ workflows:
           context: 'Slack Integration'
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [test-feature-branch]
+          # filters:
+          #   branches:
+          #     only: [test-feature-branch]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
