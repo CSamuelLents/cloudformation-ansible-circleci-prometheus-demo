@@ -191,6 +191,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install tar
+          command: apt install tar
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
