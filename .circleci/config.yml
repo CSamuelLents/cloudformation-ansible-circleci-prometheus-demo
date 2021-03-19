@@ -214,6 +214,7 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
 
+            pwd
             cat "$BACKEND_IP" >> .circleci/ansible/inventory.txt
 
             curl -H "Content-Type: text/plain" \
