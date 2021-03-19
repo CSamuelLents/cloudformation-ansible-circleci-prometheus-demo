@@ -1,4 +1,4 @@
-## Section 1 - Explain the Fundamentals and Benefits of CI/CD to Achieve, Build, and Deploy Automation for Cloud-Based Software Products
+# Section 1 - Explain the Fundamentals and Benefits of CI/CD to Achieve, Build, and Deploy Automation for Cloud-Based Software Products
 
 You are leading a team to develop the UdaPeople product, a revolutionary concept in Human Resources which promises to help small businesses care better for their most valuable resource: their people. Before implementing CI/CD for the UdaPeople product, you need to get authorization from the people who write the checks. Create a proposal in document or presentation form that “sells” the concept of CI/CD to non-technical decision-makers in the UdaPeople organization. For this, you will need to step out of your technical world and step into the world of revenue and costs. You will need to translate the benefits of CI/CD from technical language to the values of the business. To appeal to what makes business people tick, you’ll need to focus your attention on benefits that create revenue, protect revenue, control costs or reduce costs.
 
