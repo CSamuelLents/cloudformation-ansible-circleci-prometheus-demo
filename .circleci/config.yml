@@ -192,7 +192,7 @@ jobs:
       - checkout
       - run:
           name: install tar
-          command: apt install tar
+          command: yum install tar
       - run:
           name: Ensure back-end infrastructure exists
           command: |
