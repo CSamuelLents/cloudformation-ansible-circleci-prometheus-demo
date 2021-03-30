@@ -23,6 +23,7 @@
     backup: yes
 
 - name: Execute the nvm installer
+  become: yes
   command: /tmp/nvm-installer.sh
   args:
     creates: ~/.nvm/nvm.sh
