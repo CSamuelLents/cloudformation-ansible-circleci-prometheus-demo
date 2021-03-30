@@ -245,29 +245,33 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
-# Here's where you will add some code to rollback on failure
-#   run-migrations:
-#     docker:
-#       # Docker image here that supports NodeJS
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Run migrations
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Send migration results to memstash
-#           command: |
-#             # Your code here
-#             exit 1
-#       # Here's where you will add some code to rollback on failure
+        # Here's where you will add some code to rollback on failure
+
+  run-migrations:
+    docker:
+      - image: circleci/node:14.15.4
+    steps:
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+            cd ~/project/backend
+            MIGRATION_OUTPUT=$(npm run migrations)
+            migration_${CIRCLE_WORKFLOW_ID}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
+      - run:
+          name: Send migration results to memstash
+          command: |
+            curl -H "Content-Type: text/plain" \
+              -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
+              --request PUT \
+              --data migration_${CIRCLE_WORKFLOW_ID} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+      # Here's where you will add some code to rollback on failure
 
 #   deploy-frontend:
 #     docker:
-#       # Docker image here that supports AWS CLI
+#       - image: amazon/aws-cli
 #     steps:
-#       # Checkout code from git
+#       - checkout
 #       - run:
 #           name: Install dependencies
 #           command: |
