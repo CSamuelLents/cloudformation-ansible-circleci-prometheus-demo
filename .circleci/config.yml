@@ -12,8 +12,9 @@ orbs:
 commands:
   destroy_environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    executor: aws-cli/default
     steps:
+      - aws/setup:
+          profile-name: default
       - run:
           name: Destroy environment
           when: on_fail

@@ -24,6 +24,7 @@
 
 - name: Execute the nvm installer
   become: yes
+  become_user: ec2-user
   command: /tmp/nvm-installer.sh
   args:
     creates: ~/.nvm/nvm.sh
