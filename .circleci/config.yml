@@ -16,7 +16,7 @@ commands:
       - run:
           name: Install command line dependencies
           command: |
-            apt install -y unzip which
+            yum install -y unzip which
       - aws/setup:
           profile-name: default
       - run:
@@ -243,11 +243,11 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ['56:02:0b:eb:99:7d:6a:1d:80:b3:7d:f9:ac:b0:ce:c8']
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: apk add --update ansible
-      - attach_workspace:
-          at: ~/
       - run:
           name: Configure server
           command: |
@@ -272,14 +272,14 @@ jobs:
           command: |
             cd ~/project/backend
             MIGRATION_OUTPUT=$(npm run migrations)
-            migration_${CIRCLE_WORKFLOW_ID}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
+            migration_${CIRCLE_WORKFLOW_ID:0:7}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
       - run:
           name: Send migration results to memstash
           command: |
             curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
-              --data migration_${CIRCLE_WORKFLOW_ID} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment
 
   deploy-frontend:
@@ -312,11 +312,11 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file templates/bucket.yml \
-              --stack-name "${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+              --stack-name "cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Deploy frontend
-          command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID}" --delete
+          command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - destroy_environment
 
 #   deploy-backend:
