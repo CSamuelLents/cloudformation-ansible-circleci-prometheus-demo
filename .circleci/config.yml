@@ -7,7 +7,7 @@ defaults: &defaults
 
 orbs:
   slack: circleci/slack@4.2.0
-  aws: circleci/aws-cli
+  aws: circleci/aws-cli@2.0.0
 
 commands:
   destroy_environment:
