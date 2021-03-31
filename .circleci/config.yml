@@ -18,7 +18,6 @@ commands:
           command: |
             apt install -y unzip which
       - aws/setup:
-          name: Install aws-cli
           profile-name: default
       - run:
           name: Destroy environment
