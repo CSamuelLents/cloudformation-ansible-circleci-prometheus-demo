@@ -7,6 +7,7 @@ defaults: &defaults
 
 orbs:
   slack: circleci/slack@4.2.0
+  aws: circleci/aws-cli
 
 commands:
   destroy_environment:
@@ -252,6 +253,14 @@ jobs:
       - image: circleci/node:14.15.4
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: |
+            set -e
+            npm --prefix ./backend install
       - run:
           name: Run migrations
           command: |
@@ -266,7 +275,6 @@ jobs:
               --request PUT \
               --data migration_${CIRCLE_WORKFLOW_ID} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
       - destroy_environment
-      # Here's where you will add some code to rollback on failure
 
   deploy-frontend:
     docker:
