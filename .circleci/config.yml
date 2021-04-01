@@ -24,24 +24,26 @@ commands:
           when: on_fail
           command: |
             echo "Deployment failed — destroying environment"
-            s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
-    # parameters:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS=$(curl -H "Content-Type: text/plain" \
+              -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
+              --request get \
+              --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
+
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
+              cd ~/project/backend
+              npm install
             #  Add revert code here. You can find this in the Getting Started section.
               exit 1
             fi
@@ -339,28 +341,44 @@ jobs:
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       - destroy_environment
 
-#   smoke-test:
-#     docker:
-#       # Lightweight Docker image
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Get backend url
-#           command: |
-#             # your code here
-#       - run:
-#           name: Backend smoke test.
-#           command: |
-#             # your code here
-#       - run:
-#           name: Frontend smoke test.
-#           command: |
-#             # your code here
-#       - destroy_environment
+  smoke-test:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: yum install -y curl
+      - run:
+          name: Get backend URL
+          command: |
+            BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
+               --request GET https://api.memstash.io/values/backend-ip)
+            export API_URL=https://"$BACKEND_IP":3000
+      - run:
+          name: Backend smoke test.
+          command: |
+            if curl -s "$API_URL/api/status" | grep "error"
+            then
+              echo "Failed backend smoke test"
+              exit 1
+            else
+              echo "Passed backend smoke test"
+      - run:
+          name: Get frontend URL
+          command: |
+            export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
+      - run:
+          name: Frontend smoke test.
+          command: |
+            if curl -s ${URL} | grep "Welcome"
+            then
+              echo "Passed frontend smoke test"
+            else
+              echo "Failed frontend smoke test"
+              exit 1
+            fi
+      - destroy_environment
 
 #   cloudfront-update:
 #     docker:
