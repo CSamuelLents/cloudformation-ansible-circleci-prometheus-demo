@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: circleci/node:fermium
+    - image: cimg/node
 
 orbs:
   slack: circleci/slack@4.2.0
@@ -195,9 +195,11 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base
     steps:
       - checkout
+      - aws/setup:
+          profile-name: default
       - run:
           name: install dependencies
           command: yum install tar -y && yum install gzip -y
@@ -288,9 +290,11 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base
     steps:
       - checkout
+      - aws/setup:
+          profile-name: default
       - restore_cache:
           keys:
             - frontend-deps-{{ checksum "frontend/package-lock.json" }}
@@ -383,9 +387,11 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base
     steps:
       - checkout
+      - aws/setup:
+          profile-name: default
       - run:
           name: Update cloudfront distribution
           command: |
@@ -399,9 +405,11 @@ jobs:
 
   cleanup:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base
     steps:
       - checkout
+      - aws/setup:
+          profile-name: default
       - run:
           name: Get old stack workflow id
           command: |
