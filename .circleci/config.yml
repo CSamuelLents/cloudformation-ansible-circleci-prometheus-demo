@@ -397,31 +397,31 @@ jobs:
       - revert-migrations
       - destroy-environment
 
-cleanup:
-  docker:
-    image: circleci/aws-cli@2.0.0
-  steps:
-    - checkout
-    - run:
-        name: Get old stack workflow id
-        command: |
-          export OldWorkflowID=$(aws cloudformation list-exports \
-            --query "Exports[?Name=\'WorkflowID\'].Value" \
-            --no-paginate --output text)
+  cleanup:
+    docker:
+      image: circleci/aws-cli@2.0.0
+    steps:
+      - checkout
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$(aws cloudformation list-exports \
+              --query "Exports[?Name=\'WorkflowID\'].Value" \
+              --no-paginate --output text)
 
-          export STACKS=($(aws cloudformation list-stacks \
-            --query "StackSummaries[*].StackName") \
-            --stack-status-filter CREATE_COMPLETE \
-            --no-paginate --output text))
-    - run:
-        name: Remove old stacks and files
-        command: |
-          if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-          then
-            s3 rm s3://udapeople-${OldWorkflowID} --recursive
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-          fi
+            export STACKS=($(aws cloudformation list-stacks \
+              --query "StackSummaries[*].StackName") \
+              --stack-status-filter CREATE_COMPLETE \
+              --no-paginate --output text))
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              s3 rm s3://udapeople-${OldWorkflowID} --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            fi
 
 workflows:
   default:
