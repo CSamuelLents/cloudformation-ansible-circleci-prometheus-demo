@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: cimg/node
+    - image: cimg/node:lts
 
 orbs:
   slack: circleci/slack@4.2.0
