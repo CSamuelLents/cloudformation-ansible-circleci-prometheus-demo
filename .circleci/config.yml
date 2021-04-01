@@ -195,7 +195,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: cimg/base
+      - image: cimg/base:edge-20.04
     steps:
       - checkout
       - aws/setup:
@@ -386,7 +386,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: cimg/base
+      - image: cimg/base:edge-20.04
     steps:
       - checkout
       - aws/setup:
@@ -404,7 +404,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: cimg/base
+      - image: cimg/base:edge-20.04
     steps:
       - checkout
       - aws/setup:
