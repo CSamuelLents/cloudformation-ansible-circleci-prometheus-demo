@@ -12,43 +12,15 @@
 
 - name: Clean up unused dependencies
   become: yes
-  yum:
+  apt:
     autoremove: yes
 
-- name: Download nvm installer
-  get_url:
-    url: https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh
-    dest: /tmp/nvm-installer.sh
-    mode: 0644
-    backup: yes
-
-- name: Execute the nvm installer
+- name: 'Install Node and NPM.'
   become: yes
-  become_user: root
-  command: /tmp/nvm-installer.sh
-  args:
-    creates: ~/.nvm/nvm.sh
-
-- name: Update permissions for nvm activation script
-  file:
-    path: ~/.nvm/nvm.sh
-    state: touch
-    mode: 0644
-
-- name: Activate nvm
-  shell: /bin/bash ~/.nvm/nvm.sh
-
-- name: Install NodeJS
-  shell: |
-    # ensures nvm is available before usage
-    source ~/.bashrc
-    nvm install --lts
-
-- name: Copy pm2 config
-  copy:
-    src: ecosystem.config.js
-    dest: ./ecosystem.config.js
-    backup: yes
+  apt:
+    name: ['nodejs', 'npm']
+    state: latest
+    update_cache: yes
 
 - name: Install PM2
   npm:
@@ -56,15 +28,3 @@
     global: yes
     production: yes
     state: present
-
-- name: Execute Node application
-  shell: pm2 startOrGracefulReload ./ecosystem.config.js
-  environment:
-    ENVIRONMENT: production
-    TYPEORM_CONNECTION: postgres
-    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
-    TYPEORM_PORT: 5532
-    TYPEORM_HOST: ${TYPEORM_HOST}
-    TYPEORM_USERNAME: ${TYPEORM_USERNAME}
-    TYPEORM_PASSWORD: ${TYPEORM_PASSWORD}
-    TYPEORM_DATABASE: ${TYPEORM_DATABASE}
