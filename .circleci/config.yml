@@ -242,7 +242,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/python:3.9.2
     steps:
       - checkout
       - add_ssh_keys:
@@ -289,8 +289,7 @@ jobs:
       - destroy-environment
 
   deploy-frontend:
-    docker:
-      - image: cimg/base
+    <<: *defaults
     steps:
       - checkout
       - aws/setup:
@@ -329,7 +328,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/python:3.9.2
     steps:
       - checkout
       - add_ssh_keys:
@@ -347,7 +346,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/python:3.9.2
     steps:
       - checkout
       - run:
