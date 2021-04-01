@@ -399,7 +399,7 @@ jobs:
 
   cleanup:
     docker:
-      image: circleci/aws-cli@2.0.0
+      - image: circleci/aws-cli@2.0.0
     steps:
       - checkout
       - run:
