@@ -23,6 +23,8 @@ commands:
           name: Destroy environment
           when: on_fail
           command: |
+            echo "Deployment failed — destroying environment"
+            s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -319,22 +321,23 @@ jobs:
           command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - destroy_environment
 
-#   deploy-backend:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Deploy backend
-#           command: |
-#             # your code here
-#       - destroy_environment
+  deploy-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ['56:02:0b:eb:99:7d:6a:1d:80:b3:7d:f9:ac:b0:ce:c8']
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: apk add --update ansible
+      - run:
+          name: Deploy backend
+          command: |
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
+      - destroy_environment
 
 #   smoke-test:
 #     docker:
@@ -374,24 +377,31 @@ jobs:
 #             # your code here
 #       - destroy_environment
 
-# cleanup:
-#   docker:
-#     # Docker image here
-#   steps:
-#     # Checkout code from git
-#     - run:
-#         name: Get old stack workflow id
-#         command: |
-#           # your code here
-#           export OldWorkflowID="the id here"
-#           export STACKS=[] #put the list of stacks here
-#     - run:
-#         name: Remove old stacks and files
-#         command: |
-#           if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-#           then
-#             # your code here
-#           fi
+cleanup:
+  docker:
+    image: amazon/aws-cli
+  steps:
+    - checkout
+    - run:
+        name: Get old stack workflow id
+        command: |
+          export OldWorkflowID=$(aws cloudformation list-exports \
+            --query "Exports[?Name=\'WorkflowID\'].Value" \
+            --no-paginate --output text)
+
+          export STACKS=($(aws cloudformation list-stacks \
+            --query "StackSummaries[*].StackName") \
+            --stack-status-filter CREATE_COMPLETE \
+            --no-paginate --output text))
+    - run:
+        name: Remove old stacks and files
+        command: |
+          if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+          then
+            s3 rm s3://udapeople-${OldWorkflowID} --recursive
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+          fi
 
 workflows:
   default:

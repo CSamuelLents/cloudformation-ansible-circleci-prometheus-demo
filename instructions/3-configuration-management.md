@@ -80,7 +80,7 @@ In this phase, you will add CircleCI jobs that execute Cloud Formation templates
 
 - Find the job named `configure-infrastructure` in the config file.
 
-  - Write code to set up the EC2 intance to run as our back-end.
+  - Write code to set up the EC2 instance to run as our back-end.
     - Select a Docker image that supports Ansible.
     - Add the SSH key fingerprint to job so that Ansible will have access to the EC2 instance via SSH.
     - Attach the "workspace" to the job so that you have access to all the files you need (e.g. inventory file).
