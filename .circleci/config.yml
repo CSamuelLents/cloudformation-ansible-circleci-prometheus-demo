@@ -3,20 +3,16 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: circleci/node:13.8.0
+    - image: circleci/node:fermium
 
 orbs:
   slack: circleci/slack@4.2.0
   aws: circleci/aws-cli@2.0.0
 
 commands:
-  destroy_environment:
+  destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     steps:
-      - run:
-          name: Install command line dependencies
-          command: |
-            yum install -y unzip which
       - aws/setup:
           profile-name: default
       - run:
@@ -37,14 +33,16 @@ commands:
           command: |
             SUCCESS=$(curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
-              --request get \
+              --request GET \
               --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
 
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
-              npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+              set -e
+              npm --prefix ./backend install
+              npm --prefix ./backend run premigrations:revert
+              npm --prefix ./backend run migrations:revert
               exit 1
             fi
 
@@ -197,7 +195,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/aws-cli@2.0.0
     steps:
       - checkout
       - run:
@@ -238,7 +236,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy_environment
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -256,11 +254,10 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
-      - destroy_environment
+      - destroy-environment
 
   run-migrations:
-    docker:
-      - image: circleci/node:14.15.4
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -275,7 +272,10 @@ jobs:
           name: Run migrations
           command: |
             cd ~/project/backend
-            MIGRATION_OUTPUT=$(npm run migrations)
+            set -e
+            npm --prefix ./backend install
+            npm --prefix run premigrations
+            MIGRATION_OUTPUT=$(npm --prefix run migrations)
             migration_${CIRCLE_WORKFLOW_ID:0:7}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
       - run:
           name: Send migration results to memstash
@@ -284,11 +284,11 @@ jobs:
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
               --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy_environment
+      - destroy-environment
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/aws-cli@2.0.0
     steps:
       - checkout
       - restore_cache:
@@ -321,7 +321,7 @@ jobs:
       - run:
           name: Deploy frontend
           command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
-      - destroy_environment
+      - destroy-environment
 
   deploy-backend:
     docker:
@@ -339,7 +339,7 @@ jobs:
           name: Deploy backend
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
-      - destroy_environment
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -378,26 +378,28 @@ jobs:
               echo "Failed frontend smoke test"
               exit 1
             fi
-      - destroy_environment
+      - revert-migrations
+      - destroy-environment
 
-#   cloudfront-update:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             # your code here
-#       - destroy_environment
+  cloudfront-update:
+    docker:
+      - image: circleci/aws-cli@2.0.0
+    steps:
+      - checkout
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+              --template-file ~/project/.circleci/files/cloudfront.yml
+              --stack-name udapeople-cloudfront
+              --parameter-overrides WorkflowID="${CIRCLECI_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+      - revert-migrations
+      - destroy-environment
 
 cleanup:
   docker:
-    image: amazon/aws-cli
+    image: circleci/aws-cli@2.0.0
   steps:
     - checkout
     - run:
@@ -442,20 +444,17 @@ workflows:
           context: 'Slack Integration'
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # filters:
-          #   branches:
-          #     only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [deploy-infrastructure, run-migrations]
+      - deploy-backend:
+          requires: [configure-infrastructure, run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]

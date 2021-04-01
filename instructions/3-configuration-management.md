@@ -145,17 +145,23 @@ Now that the infrastructure is up and running, it’s time to configure for depe
 All this automated deployment stuff is great, but what if there’s something we didn’t plan for that made it through to production? What if the UdaPeople website is now down due to a runtime bug that our unit tests didn’t catch? Users won’t be able to access their data! This same situation can happen with manual deployments, too. In a manual deployment situation, what’s the first thing you do after you finish deploying? You do a “smoke test” by going to the site and making sure you can still log in or navigate around. You might do a quick `curl` on the backend to make sure it is responding. In an automated scenario, you can do the same thing through code. Let’s add a job to provide the UdaPeople team with a little sanity check.
 
 - Find the job named `smoke-test` in your config file.
+
   - Select a lightweight Docker image like one of the Alpine images.
   - Write code to make a simple test on both front-end and back-end. Use the suggested tests below or come up with your own.
+
     - Install dependencies like `curl`.
     - Test the back-end
+
       - Retrieve the back-end IP address that you saved in an earlier job.
-      - Use `curl` to hit the back-end API's status endpoint (e.g. https://1.2.3.4:3000/api/status)
+      - Use `curl` to hit the back-end API's status endpoint (e.g. [https://1.2.3.4:3000/api/status](https://1.2.3.4:3000/api/status))
       - No errors mean a successful test
+
     - Test the front-end
+
       - Form the front-end url using the workflow id and your AWS region like this: `URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"`
       - Check the front-end to make sure it includes a word or two that proves it is working properly.
       - No errors mean a successful test
+
       ```bash
       if curl -s ${URL} | grep "Welcome"
       then
@@ -164,6 +170,7 @@ All this automated deployment stuff is great, but what if there’s something we
         return 0
       fi
       ```
+
 - Provide a screenshot for appropriate failure for the smoke test job. **[SCREENSHOT06]**
 
 ![Job properly failing because of a failed smoke test.](screenshots/SCREENSHOT06.png)
@@ -207,19 +214,24 @@ Assuming the smoke test came back clean, we should have a relatively high level 
 The UdaPeople finance department likes it when your AWS bills are more or less the same as last month OR trending downward. But, what if all this “Blue-Green” is leaving behind a trail of dead-end production environments? That upward trend probably means no Christmas bonus for the dev team. Let’s make sure everyone at UdaPeople has a Merry Christmas by adding a job to clean up old stacks.
 
 - Find the job named `cleanup` in your config file.
+
   - Write code that deletes the previous S3 bucket and EC2 instance.
+
     - Query CloudFormation to find out the old stack's workflow id like this:
-    ```
+
+    ```bash
     export OldWorkflowID=$(aws cloudformation \
           list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
           --no-paginate --output text)
       export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
           --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
     ```
+
     - Remove old stacks/files
       - Back-end stack (example: `aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"`)
       - Front-end files in S3 (example: `aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive`)
       - Front-end stack
+
 - Provide a screenshot of the successful job. **[SCREENSHOT09]**
 
 ![Successful cleanup job.](screenshots/SCREENSHOT09.png)
