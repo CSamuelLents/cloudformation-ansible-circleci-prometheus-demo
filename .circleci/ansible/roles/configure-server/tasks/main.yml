@@ -20,9 +20,9 @@
   apt:
     name: ['nodejs', 'npm']
     state: latest
-    update_cache: yes
 
 - name: Install PM2
+  become: yes
   npm:
     name: pm2
     global: yes
