@@ -195,7 +195,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: circleci/aws-cli@2.0.0
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
@@ -288,7 +288,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/aws-cli@2.0.0
+      - image: amazon/aws-cli
     steps:
       - checkout
       - restore_cache:
@@ -383,7 +383,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: circleci/aws-cli@2.0.0
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
@@ -399,7 +399,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: circleci/aws-cli@2.0.0
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
