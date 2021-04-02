@@ -248,14 +248,11 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          command: |
-            sudo apt update
-            sudo apt install software-properties-common
-            sudo apt-add-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible
+          command: pip3 install ansible --user ansible
       - run:
           name: Configure server
           command: |
+            echo $(which ansible)
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
       - destroy-environment
 
@@ -338,14 +335,11 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          command: |
-            sudo apt update
-            sudo apt install software-properties-common
-            sudo apt-add-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible
+          command: pip3 install ansible --user ansible
       - run:
           name: Deploy backend
           command: |
+            echo $(which ansible)
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       - destroy-environment
 
