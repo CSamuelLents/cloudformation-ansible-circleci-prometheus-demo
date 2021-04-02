@@ -334,7 +334,7 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          command: apk add --update ansible
+          command: python3 -m pip install ansible
       - run:
           name: Deploy backend
           command: |
