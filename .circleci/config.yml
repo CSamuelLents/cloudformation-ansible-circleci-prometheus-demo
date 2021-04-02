@@ -248,7 +248,11 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          command: python3 -m pip install ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt-add-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible
       - run:
           name: Configure server
           command: |
@@ -334,7 +338,11 @@ jobs:
           at: ~/
       - run:
           name: Install dependencies
-          command: python3 -m pip install ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt-add-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible
       - run:
           name: Deploy backend
           command: |
