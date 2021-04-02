@@ -201,9 +201,6 @@ jobs:
       - aws/setup:
           profile-name: default
       - run:
-          name: install dependencies
-          command: yum install tar -y && yum install gzip -y
-      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -349,9 +346,6 @@ jobs:
       - image: cimg/python:3.9.2
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: yum install -y curl
       - run:
           name: Get backend URL
           command: |
