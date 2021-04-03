@@ -14,6 +14,17 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks with a specific workflow ID.
     steps:
       - run:
+          name: Ensure aws-cli is present
+          when: on_fail
+          command: |
+            echo "Checking if aws-cli is installed..."
+
+            if ! [ -x "$(command -v aws)" ]; then
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws_cli_v2.zip"
+              unzip aws_cli_v2.zip
+              sudo ./aws/install
+            fi
+      - run:
           name: Destroy environment
           when: on_fail
           command: |
@@ -41,7 +52,6 @@ commands:
               npm --prefix ./backend install
               npm --prefix ./backend run premigrations:revert
               npm --prefix ./backend run migrations:revert
-              exit 1
             fi
 
 jobs:
@@ -276,8 +286,8 @@ jobs:
             cd ~/project/backend
             set -e
             npm --prefix ./backend install
-            npm --prefix run premigrations
-            MIGRATION_OUTPUT=$(npm --prefix run migrations)
+            npm --prefix ./backend run premigrations
+            MIGRATION_OUTPUT=$(npm --prefix ./backend run migrations)
             migration_${CIRCLE_WORKFLOW_ID:0:7}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
       - run:
           name: Send migration results to memstash
