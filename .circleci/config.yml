@@ -28,8 +28,14 @@ commands:
           name: Destroy environment
           when: on_fail
           command: |
-            echo "Deployment failed — destroying environment"
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            echo "Deployment failed"
+
+            if aws s3api head-bucket --bucket "$S3_BUCKET" 2>/dev/null; then
+              echo "Destroying s3 bucket udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+              aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            fi
+
+            echo "Destroying stacks udapeople-[backend|frontend]-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -242,8 +248,6 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   configure-infrastructure:
@@ -263,8 +267,6 @@ jobs:
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   run-migrations:
@@ -293,8 +295,6 @@ jobs:
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
               --data "$MIGRATION_OUTPUT" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   deploy-frontend:
@@ -333,8 +333,6 @@ jobs:
       - run:
           name: Deploy frontend
           command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   deploy-backend:
@@ -354,8 +352,6 @@ jobs:
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   smoke-test:
@@ -393,8 +389,6 @@ jobs:
               exit 1
             fi
       - revert-migrations
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   cloudfront-update:
@@ -413,8 +407,6 @@ jobs:
               --parameter-overrides WorkflowID="${CIRCLECI_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
       - revert-migrations
-      - aws/setup:
-          profile-name: default
       - destroy-environment
 
   cleanup:
