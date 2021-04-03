@@ -252,7 +252,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            echo $(which ansible)
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
       - aws/setup:
           profile-name: default
@@ -345,7 +345,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            echo $(which ansible)
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       - aws/setup:
           profile-name: default
