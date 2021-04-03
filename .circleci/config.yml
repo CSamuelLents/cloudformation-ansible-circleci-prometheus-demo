@@ -13,8 +13,6 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks with a specific workflow ID.
     steps:
-      - aws/setup:
-          profile-name: default
       - run:
           name: Destroy environment
           when: on_fail
@@ -235,6 +233,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   configure-infrastructure:
@@ -254,6 +254,8 @@ jobs:
           command: |
             echo $(which ansible)
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   run-migrations:
@@ -284,6 +286,8 @@ jobs:
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
               --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   deploy-frontend:
@@ -322,6 +326,8 @@ jobs:
       - run:
           name: Deploy frontend
           command: aws s3 sync ./frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   deploy-backend:
@@ -341,6 +347,8 @@ jobs:
           command: |
             echo $(which ansible)
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   smoke-test:
@@ -378,6 +386,8 @@ jobs:
               exit 1
             fi
       - revert-migrations
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   cloudfront-update:
@@ -396,6 +406,8 @@ jobs:
               --parameter-overrides WorkflowID="${CIRCLECI_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
       - revert-migrations
+      - aws/setup:
+          profile-name: default
       - destroy-environment
 
   cleanup:
