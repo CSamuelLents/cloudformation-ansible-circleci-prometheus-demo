@@ -285,15 +285,14 @@ jobs:
             set -e
             npm --prefix ./backend install
             npm --prefix ./backend run premigrations
-            MIGRATION_OUTPUT=$(npm --prefix ./backend run migrations)
-            migration_${CIRCLE_WORKFLOW_ID:0:7}=$(grep -q "has been executed successfully" "$MIGRATION_OUTPUT" ; echo $?)
+            MIGRATION_OUTPUT=$(npm --prefix ./backend run migrations | grep -q "has been executed successfully" ; echo $?)
       - run:
           name: Send migration results to memstash
           command: |
             curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
-              --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              --data "$MIGRATION_OUTPUT" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
       - aws/setup:
           profile-name: default
       - destroy-environment
