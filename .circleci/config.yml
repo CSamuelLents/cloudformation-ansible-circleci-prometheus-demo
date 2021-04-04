@@ -324,13 +324,6 @@ jobs:
             set -e
             npm --prefix ~/project/frontend run build
       - run:
-          name: Deploy Cloudfront
-          command: |
-            aws cloudformation deploy \
-              --template-file ~/project/.circleci/files/frontend.yml \
-              --stack-name "udapeople-cloudfront" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
           name: Deploy frontend
           command: aws s3 sync ~/project/frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - revert-migrations
