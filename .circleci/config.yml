@@ -50,7 +50,7 @@ commands:
             SUCCESS=$(curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request GET \
-              --data migration_${CIRCLE_WORKFLOW_ID:0:7} https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
+              --data https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
 
             if(( $SUCCESS==1 )) ; then
               set -e
@@ -376,12 +376,12 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            if curl -s "$API_URL/api/status" | grep "error"
-            then
+            if curl -s "$API_URL/api/status" | grep "error" ; then
               echo "Failed backend smoke test"
               exit 1
             else
               echo "Passed backend smoke test"
+            fi
       - run:
           name: Get frontend URL
           command: |
