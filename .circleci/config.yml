@@ -388,6 +388,8 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
+            echo "$FRONTEND_URL"
+            echo $(curl -s "$FRONTEND_URL")
             if curl -s "$FRONTEND_URL" | grep "Welcome" ; then
               echo "Passed frontend smoke test"
             else
