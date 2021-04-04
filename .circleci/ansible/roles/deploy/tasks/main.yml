@@ -11,6 +11,9 @@
     dest: ~/backend/dist
     backup: yes
 
+- name: Debug...
+  shell: pwd && ls && ls ./backend && ls ./backend/dist
+
 - name: Execute Node application
   shell: pm2 startOrGracefulReload ~/ecosystem.config.js
   environment:
