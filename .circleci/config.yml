@@ -1,7 +1,7 @@
 version: 2.1
 
 defaults: &defaults
-  working_directory: ~/app
+  working_directory: ~/project
   docker:
     - image: cimg/node:lts
 
@@ -54,9 +54,9 @@ commands:
 
             if(( $SUCCESS==1 )) ; then
               set -e
-              npm --prefix ~/app/backend install
-              npm --prefix ~/app/backend run premigrations:revert
-              npm --prefix ~/app/backend run migrations:revert
+              npm --prefix ~/project/backend install
+              npm --prefix ~/project/backend run premigrations:revert
+              npm --prefix ~/project/backend run migrations:revert
             fi
 
 jobs:
@@ -71,12 +71,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/frontend install
+            npm --prefix ~/project/frontend install
       - run:
           name: Build front-end
           command: |
             set -e
-            npm --prefix ~/app/frontend run build
+            npm --prefix ~/project/frontend run build
       - save_cache:
           key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
           paths:
@@ -98,12 +98,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/backend install
+            npm --prefix ~/project/backend install
       - run:
           name: Backend build
           command: |
             set -e
-            npm --prefix ~/app/backend run build
+            npm --prefix ~/project/backend run build
       - save_cache:
           key: backend-deps-{{ checksum "backend/package-lock.json" }}
           paths:
@@ -125,12 +125,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/frontend install
+            npm --prefix ~/project/frontend install
       - run:
           name: Front-end tests
           command: |
             set -e
-            npm --prefix ~/app/frontend run test
+            npm --prefix ~/project/frontend run test
       - slack/notify:
           event: fail
           mentions: '@here'
@@ -148,12 +148,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/backend install
+            npm --prefix ~/project/backend install
       - run:
           name: Backend tests
           command: |
             set -e
-            npm --prefix ~/app/backend run test
+            npm --prefix ~/project/backend run test
       - slack/notify:
           event: fail
           mentions: '@here'
@@ -171,12 +171,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/frontend install
+            npm --prefix ~/project/frontend install
       - run:
           name: Scan frontend for vulnerabilities
           command: |
             set -e
-            npm --prefix ~/app/frontend audit --audit-level=critical
+            npm --prefix ~/project/frontend audit --audit-level=critical
       - slack/notify:
           event: fail
           mentions: '@here'
@@ -194,12 +194,12 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/backend install
+            npm --prefix ~/project/backend install
       - run:
           name: Scan backend for vulnerabilities
           command: |
             set -e
-            npm --prefix ~/app/backend audit --audit-level=critical
+            npm --prefix ~/project/backend audit --audit-level=critical
       - slack/notify:
           event: fail
           mentions: '@here'
@@ -217,7 +217,7 @@ jobs:
           name: Ensure backend infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file ~/app/.circleci/files/backend.yml \
+              --template-file ~/project/.circleci/files/backend.yml \
               --tags project="udapeople" \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
@@ -225,7 +225,7 @@ jobs:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
-              --template-file ~/app/.circleci/files/frontend.yml \
+              --template-file ~/project/.circleci/files/frontend.yml \
               --tags project="udapeople" \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
@@ -236,7 +236,7 @@ jobs:
               --query "Reservations[*].Instances[*].{PublicIP:PublicIpAddress}"  \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            echo "$BACKEND_IP" >> ~/app/.circleci/ansible/inventory.txt
+            echo "$BACKEND_IP" >> ~/project/.circleci/ansible/inventory.txt
       - run:
           name: Save backend ip to memstash
           command: |
@@ -266,7 +266,7 @@ jobs:
           name: Configure server
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i ~/app/.circleci/ansible/inventory.txt ~/app/.circleci/ansible/configure-server.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
       - destroy-environment
 
   run-migrations:
@@ -280,14 +280,14 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/backend install
+            npm --prefix ~/project/backend install
       - run:
           name: Run migrations
           command: |
             set -e
-            npm --prefix ~/app/backend install
-            npm --prefix ~/app/backend run premigrations
-            MIGRATION_OUTPUT=$(npm --prefix ~/app/backend run migrations | grep -q "has been executed successfully" ; echo $?)
+            npm --prefix ~/project/backend install
+            npm --prefix ~/project/backend run premigrations
+            MIGRATION_OUTPUT=$(npm --prefix ~/project/backend run migrations | grep -q "has been executed successfully" ; echo $?)
       - run:
           name: Send migration results to memstash
           command: |
@@ -310,7 +310,7 @@ jobs:
           name: Install dependencies
           command: |
             set -e
-            npm --prefix ~/app/frontend install
+            npm --prefix ~/project/frontend install
       - run:
           name: Get backend url
           command: |
@@ -322,17 +322,17 @@ jobs:
           name: Build frontend
           command: |
             set -e
-            npm --prefix ~/app/frontend run build
+            npm --prefix ~/project/frontend run build
       - run:
           name: Deploy Cloudfront
           command: |
             aws cloudformation deploy \
-              --template-file ~/app/.circleci/files/frontend.yml \
+              --template-file ~/project/.circleci/files/frontend.yml \
               --stack-name "udapeople-cloudfront" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Deploy frontend
-          command: aws s3 sync ~/app/frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
+          command: aws s3 sync ~/project/frontend/dist s3://"udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - revert-migrations
       - destroy-environment
 
@@ -355,17 +355,17 @@ jobs:
           name: Install backend dependencies
           command: |
             set -e
-            npm --prefix ~/app/backend install
+            npm --prefix ~/project/backend install
       - run:
           name: Backend build
           command: |
             set -e
-            npm --prefix ~/app/backend run build
+            npm --prefix ~/project/backend run build
       - run:
           name: Deploy backend
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i ~/app/.circleci/ansible/inventory.txt ~/app/.circleci/ansible/deploy-backend.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       - revert-migrations
       - destroy-environment
 
@@ -416,7 +416,7 @@ jobs:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
-              --template-file ~/app/.circleci/files/cloudfront.yml \
+              --template-file ~/project/.circleci/files/cloudfront.yml \
               --stack-name udapeople-cloudfront \
               --parameter-overrides WorkflowID="${CIRCLECI_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
