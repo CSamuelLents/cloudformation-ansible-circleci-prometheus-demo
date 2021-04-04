@@ -9,6 +9,7 @@
   copy:
     src: ~/project/backend/dist
     dest: ~/backend/dist
+    mode: 644
     backup: yes
 
 - name: Debug...
