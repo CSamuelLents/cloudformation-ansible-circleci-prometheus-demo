@@ -381,13 +381,14 @@ jobs:
             else
               echo "Passed backend smoke test"
             fi
-      - run:
-          name: Get frontend URL
-          command: |
-            export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
+      # - run:
+      #     name: Get frontend URL
+      #     command: |
+      #       export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
       - run:
           name: Frontend smoke test.
           command: |
+            FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
             echo "$FRONTEND_URL"
             echo $(curl -s "$FRONTEND_URL")
             if curl -s "$FRONTEND_URL" | grep "Welcome" ; then
