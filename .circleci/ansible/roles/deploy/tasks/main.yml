@@ -8,7 +8,7 @@
 - name: Copy application source
   copy:
     src: ~/project/backend/dist
-    dest: ~/backend/dist
+    dest: ~/backend
     mode: 644
     backup: yes
 
