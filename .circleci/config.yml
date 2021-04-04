@@ -328,7 +328,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file ~/project/.circleci/files/frontend.yml \
-              --stack-name "cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name "udapeople-cloudfront" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Deploy frontend
