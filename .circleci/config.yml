@@ -31,7 +31,7 @@ commands:
             echo "Deployment failed"
             echo "Checking if deployment bucket was created..."
 
-            if aws s3api head-bucket --bucket "$S3_BUCKET" 2>/dev/null; then
+            if aws s3api head-bucket --bucket "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" 2>/dev/null; then
               echo "Destroying s3 bucket udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
               aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             fi
