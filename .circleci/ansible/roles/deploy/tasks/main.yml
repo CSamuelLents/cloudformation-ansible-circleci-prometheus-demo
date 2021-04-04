@@ -13,9 +13,11 @@
 
 - name: Debug...
   shell: pwd && ls && ls ./backend && ls ./backend/dist
+  debugger: always
 
 - name: Execute Node application
   shell: pm2 startOrGracefulReload ~/ecosystem.config.js
+  debugger: on_failed
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: postgres
