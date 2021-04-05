@@ -28,15 +28,9 @@ commands:
           name: Destroy environment
           when: on_fail
           command: |
-            echo "Deployment failed"
-            echo "Checking if deployment bucket was created..."
+            echo "Deployment failed - destroying environment with workflow id ${CIRCLE_WORKFLOW_ID:0:7}"
 
-            if aws s3api head-bucket --bucket s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} 2>/dev/null; then
-              echo "Emptying s3 bucket udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
-              aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            fi
-
-            echo "Destroying stacks udapeople-[backend|frontend]-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -286,7 +280,8 @@ jobs:
             set -e
             npm --prefix ~/project/backend install
             npm --prefix ~/project/backend run premigrations
-            MIGRATION_OUTPUT=$(npm --prefix ~/project/backend run migrations | grep -q "has been executed successfully" ; echo $?)
+            export MIGRATION_OUTPUT=$(npm --prefix ~/project/backend run migrations | grep -q "has been executed successfully" ; echo $?)
+            echo $MIGRATION_OUTPUT
       - run:
           name: Send migration results to memstash
           command: |
