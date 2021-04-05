@@ -51,7 +51,7 @@ commands:
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
 
-            if(( $SUCCESS==1 )) ; then
+            if [[ $SUCCESS == 1 ]] ; then
               set -e
               npm --prefix ~/project/backend install
               npm --prefix ~/project/backend run premigrations:revert
@@ -383,10 +383,6 @@ jobs:
             else
               echo "Passed backend smoke test"
             fi
-      # - run:
-      #     name: Get frontend URL
-      #     command: |
-      #       export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
       - run:
           name: Frontend smoke test.
           command: |
