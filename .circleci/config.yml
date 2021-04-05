@@ -31,8 +31,8 @@ commands:
             echo "Deployment failed"
             echo "Checking if deployment bucket was created..."
 
-            if aws s3api head-bucket --bucket "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" 2>/dev/null; then
-              echo "Destroying s3 bucket udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+            if aws s3api head-bucket --bucket s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} 2>/dev/null; then
+              echo "Emptying s3 bucket udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
               aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             fi
 
@@ -375,6 +375,8 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
+            echo $(curl -s "$API_URL/api/status")
+
             if curl -s "$API_URL/api/status" | grep "error" ; then
               echo "Failed backend smoke test"
               exit 1
@@ -388,9 +390,10 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-2.amazonaws.com"
+            FRONTEND_URL=http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com
             echo "$FRONTEND_URL"
             echo $(curl -s "$FRONTEND_URL")
+
             if curl -s "$FRONTEND_URL" | grep "Welcome" ; then
               echo "Passed frontend smoke test"
             else
