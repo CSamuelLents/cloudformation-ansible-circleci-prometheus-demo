@@ -19,15 +19,18 @@ Resources:
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref 'WebsiteBucket'
+      Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Statement:
-          - Sid: PublicReadForGetBucketObjects
+          - Action:
+              - 's3:GetObject'
             Effect: Allow
             Principal: '*'
-            Action: s3:GetObject
-            Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WebsiteBucket', /*]]
-
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebsiteBucket
+                - /*
 Outputs:
   WebsiteURL:
     Value: !GetAtt WebsiteBucket.WebsiteURL
