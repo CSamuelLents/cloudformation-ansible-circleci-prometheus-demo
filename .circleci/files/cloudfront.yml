@@ -33,6 +33,6 @@ Resources:
 Outputs:
   WorkflowID:
     Value: !Ref WorkflowID
-    Description: CircleCI Workflow ID
+    Description: CircleCI Unique Identifier
     Export:
       Name: WorkflowID
