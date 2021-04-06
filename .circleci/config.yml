@@ -416,8 +416,12 @@ jobs:
       - checkout
       - aws/setup:
           profile-name: default
+      # - run:
+      #     name: Get old stack workflow id
+      #     command: |
+
       - run:
-          name: Get old stack workflow id
+          name: Remove old stacks and files
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation list-exports \
               --query "Exports[?Name==\"WorkflowID\"].Value" \
@@ -427,14 +431,12 @@ jobs:
               --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE \
               --no-paginate --output text)
-      - run:
-          name: Remove old stacks and files
-          command: |
+
             echo $OLD_WORKFLOW_ID
             echo $STACKS
 
             if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]] ; then
-              s3 rm s3://udapeople-${OLD_WORKFLOW_ID} --recursive
+              aws s3 rm s3://udapeople-${OLD_WORKFLOW_ID} --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
             fi
