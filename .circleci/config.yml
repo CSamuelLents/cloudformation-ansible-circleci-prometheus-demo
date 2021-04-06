@@ -459,7 +459,7 @@ workflows:
       #     requires: [build-backend]
       #     context: 'Slack Integration'
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend] # , scan-frontend, scan-backend
+          # requires: [test-frontend, test-backend] # , scan-frontend, scan-backend
           filters:
             branches:
               only: [main]
@@ -468,12 +468,12 @@ workflows:
       # - run-migrations:
       #     requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [deploy-infrastructure, run-migrations]
+          requires: [deploy-infrastructure] #, run-migrations
       - deploy-backend:
-          requires: [configure-infrastructure, run-migrations]
+          requires: [configure-infrastructure] #, run-migrations
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
-          requires: [smoke-test]
+          # requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
