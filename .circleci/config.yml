@@ -386,7 +386,7 @@ jobs:
               echo "Passed frontend smoke test"
             else
               echo "Failed frontend smoke test"
-              # exit 1
+              exit 1
             fi
       - revert-migrations
       - destroy-environment
@@ -428,8 +428,7 @@ jobs:
               --stack-status-filter CREATE_COMPLETE \
               --no-paginate --output text)
 
-            echo $OLD_WORKFLOW_ID
-            echo $STACKS
+            echo "Removing previous deployment assets with WorkflowID: $OLD_WORKFLOW_ID"
 
             if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]] ; then
               aws s3 rm s3://udapeople-${OLD_WORKFLOW_ID} --recursive
@@ -444,35 +443,34 @@ workflows:
           context: 'Slack Integration'
       - build-backend:
           context: 'Slack Integration'
-      # - test-frontend:
-      #     requires: [build-frontend]
-      #     context: 'Slack Integration'
-      # - test-backend:
-      #     requires: [build-backend]
-      #     context: 'Slack Integration'
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      #     context: 'Slack Integration'
-      # - scan-backend:
-      #     requires: [build-backend]
-      #     context: 'Slack Integration'
-      - deploy-infrastructure: # requires: [test-frontend, test-backend] # , scan-frontend, scan-backend
-          requires: [build-frontend, build-backend]
+      - test-frontend:
+          requires: [build-frontend]
+          context: 'Slack Integration'
+      - test-backend:
+          requires: [build-backend]
+          context: 'Slack Integration'
+      - scan-frontend:
+          requires: [build-frontend]
+          context: 'Slack Integration'
+      - scan-backend:
+          requires: [build-backend]
+          context: 'Slack Integration'
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [deploy-infrastructure] #, run-migrations
+          requires: [deploy-infrastructure, run-migrations]
       - deploy-backend:
-          requires: [configure-infrastructure] #, run-migrations
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
+          requires: [configure-infrastructure, run-migrations]
+      - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-        # requires: [smoke-test]
+      - cloudfront-update:
+          requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
