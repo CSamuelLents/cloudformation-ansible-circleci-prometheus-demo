@@ -305,7 +305,7 @@ jobs:
             set -e
             npm --prefix ~/project/frontend install
       - run:
-          name: Get backend url
+          name: Get backend url for build env
           command: |
             BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
                --request GET https://api.memstash.io/values/backend-ip)
@@ -384,6 +384,7 @@ jobs:
 
             if curl -s "$FRONTEND_URL" | grep "Welcome" ; then
               echo "Passed frontend smoke test"
+              exit 1
             else
               echo "Failed frontend smoke test"
               exit 1
