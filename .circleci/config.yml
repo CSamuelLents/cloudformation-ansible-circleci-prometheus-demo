@@ -384,7 +384,6 @@ jobs:
 
             if curl -s "$FRONTEND_URL" | grep "Welcome" ; then
               echo "Passed frontend smoke test"
-              exit 1
             else
               echo "Failed frontend smoke test"
               exit 1
