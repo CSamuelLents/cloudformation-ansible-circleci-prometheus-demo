@@ -12,6 +12,12 @@
 #     mode: 644
 #     backup: yes
 
+- name: Create codebase extraction target
+  become: true
+  file:
+    path: ~/backend
+    state: directory
+
 - name: Extract backend to folder
   become_user: ubuntu
   unarchive:
