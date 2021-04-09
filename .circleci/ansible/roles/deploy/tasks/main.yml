@@ -17,6 +17,8 @@
   file:
     path: ~/backend
     state: directory
+    owner: ubuntu
+    group: ubuntu
 
 - name: Extract backend to folder
   become_user: ubuntu
