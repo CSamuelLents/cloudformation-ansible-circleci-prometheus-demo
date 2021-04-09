@@ -22,9 +22,7 @@ class App extends Component<App.Props> {
   }
 
   render() {
-    const autoCloseTime = process.env.TOASTER_AUTO_CLOSE_TIME_IN_MILLISECONDS
-      ? parseInt(process.env.TOASTER_AUTO_CLOSE_TIME_IN_MILLISECONDS, 10)
-      : 3000;
+    const autoCloseTime = 3000;
 
     const CloseButton = ({ closeToast }: any) => (
       <a href="javascript:void(0)" className={style['e-toaster-close']}>
