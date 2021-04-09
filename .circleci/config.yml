@@ -477,20 +477,21 @@ workflows:
           context: 'Slack Integration'
       - build-backend:
           context: 'Slack Integration'
-      - test-frontend:
-          requires: [build-frontend]
-          context: 'Slack Integration'
-      - test-backend:
-          requires: [build-backend]
-          context: 'Slack Integration'
-      - scan-frontend:
-          requires: [build-frontend]
-          context: 'Slack Integration'
-      - scan-backend:
-          requires: [build-backend]
-          context: 'Slack Integration'
+      # - test-frontend:
+      #     requires: [build-frontend]
+      #     context: 'Slack Integration'
+      # - test-backend:
+      #     requires: [build-backend]
+      #     context: 'Slack Integration'
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      #     context: 'Slack Integration'
+      # - scan-backend:
+      #     requires: [build-backend]
+      #     context: 'Slack Integration'
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [build-frontend, build-backend]
           filters:
             branches:
               only: [main]
