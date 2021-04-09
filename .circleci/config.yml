@@ -368,7 +368,7 @@ jobs:
           command: |
             BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
                --request GET https://api.memstash.io/values/backend-ip)
-            export API_URL=https://"$BACKEND_IP":3000
+            export API_URL=https://"$BACKEND_IP":3030
       - run:
           name: Backend smoke test.
           command: |
@@ -478,5 +478,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]

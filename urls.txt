@@ -1,5 +1,5 @@
-URL01 (GitHub): https://github.com/CSamuelLents/udacity-cloud-devops-3
-URL02 (S3): 
-URL03 (EC2): 
-URL04 (Cloudfront): 
+URL01 (GitHub):     https://github.com/CSamuelLents/udacity-cloud-devops-3
+URL02 (S3):         http://udapeople-04710fd.s3-website.us-east-2.amazonaws.com/
+URL03 (Cloudfront): d1740u0fcrlhw4.cloudfront.net
+URL04 (EC2):        https://18.189.185.223:3000
 URL05 (Prometheus): 

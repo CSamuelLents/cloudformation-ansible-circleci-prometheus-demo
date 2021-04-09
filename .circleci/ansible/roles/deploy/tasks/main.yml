@@ -12,9 +12,6 @@
     mode: 644
     backup: yes
 
-- name: Debug...
-  shell: pwd && ls && ls ./backend && ls ./backend/dist
-
 - name: Execute Node application
   shell: pm2 startOrGracefulReload ~/ecosystem.config.js
   environment:
@@ -26,3 +23,6 @@
     TYPEORM_USERNAME: lookup('env', 'TYPEORM_USERNAME')
     TYPEORM_PASSWORD: lookup('env', 'TYPEORM_PASSWORD')
     TYPEORM_DATABASE: lookup('env', 'TYPEORM_DATABASE')
+
+- name: Debug...
+  shell: printenv
