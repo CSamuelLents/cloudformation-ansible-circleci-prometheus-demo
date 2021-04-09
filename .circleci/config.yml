@@ -302,7 +302,7 @@ jobs:
           command: |
             set -e
             npm --prefix ~/project/backend install
-      - create-backend-env
+      # - create-backend-env
       - run:
           name: Run migrations
           command: |
