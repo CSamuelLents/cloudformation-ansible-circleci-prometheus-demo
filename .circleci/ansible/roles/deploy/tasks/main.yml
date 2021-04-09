@@ -13,7 +13,7 @@
     backup: yes
 
 - name: Execute Node application
-  shell: pm2 startOrGracefulReload ~/ecosystem.config.js
+  shell: printenv && pm2 startOrGracefulReload ~/ecosystem.config.js
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: postgres
@@ -23,6 +23,3 @@
     TYPEORM_USERNAME: lookup('env', 'TYPEORM_USERNAME')
     TYPEORM_PASSWORD: lookup('env', 'TYPEORM_PASSWORD')
     TYPEORM_DATABASE: lookup('env', 'TYPEORM_DATABASE')
-
-- name: Debug...
-  shell: printenv
