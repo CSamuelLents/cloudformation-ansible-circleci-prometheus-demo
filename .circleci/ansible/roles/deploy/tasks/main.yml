@@ -19,7 +19,7 @@
     state: directory
 
 - name: Extract backend to folder
-  become_user: ubuntu
+  become: true
   unarchive:
     src: ~/project/backend.tar.gz
     dest: ~/backend
