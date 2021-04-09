@@ -15,10 +15,8 @@
 - name: Create codebase extraction target
   become: true
   file:
-    path: ~/backend
+    path: /home/ubuntu/backend
     state: directory
-    owner: ubuntu
-    group: ubuntu
 
 - name: Extract backend to folder
   become_user: ubuntu
