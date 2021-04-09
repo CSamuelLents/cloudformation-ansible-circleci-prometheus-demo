@@ -5,15 +5,24 @@
     dest: ~/ecosystem.config.js
     backup: yes
 
-- name: Copy application source
-  copy:
-    src: ~/project/backend/dist
+# - name: Copy application source
+#   copy:
+#     src: ~/project/backend/dist
+#     dest: ~/backend
+#     mode: 644
+#     backup: yes
+
+- name: Extract backend to folder
+  become_user: ubuntu
+  unarchive:
+    src: /home/backend.tar.gz
     dest: ~/backend
-    mode: 644
-    backup: yes
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
 
 - name: Execute Node application
-  shell: printenv && pm2 startOrGracefulReload ~/ecosystem.config.js
+  shell: pm2 startOrGracefulReload ~/ecosystem.config.js
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: postgres
