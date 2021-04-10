@@ -9,7 +9,7 @@
   become: yes
   unarchive:
     src: ~/project/backend.tar.gz
-    dest: /home/ubuntu/
+    dest: /
     owner: ubuntu
     group: ubuntu
     list_files: yes
