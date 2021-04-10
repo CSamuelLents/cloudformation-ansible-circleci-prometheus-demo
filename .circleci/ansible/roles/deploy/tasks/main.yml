@@ -14,6 +14,26 @@
     group: ubuntu
     mode: 0755
 
+- name: Extract backend to folder
+  become: true
+  unarchive:
+    src: ~/project/backend.tar.gz
+    dest: /home/ubuntu
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
+
+- name: Debug file path 1
+  shell: ls
+
+- name: Debug file path 2
+  shell: ls backend
+
+- name: Debug env
+  ansible.builtin.debug:
+    msg:
+      - "TYPEORM_HOST: {{ lookup('env', 'TYPEORM_HOST') }}"
+
 - name: Execute Node application
   shell: pm2 startOrGracefulReload /home/ubuntu/ecosystem.config.js
   environment:
