@@ -5,17 +5,11 @@
     dest: ~/ecosystem.config.js
     backup: yes
 
-- name: Create codebase extraction target
-  become: true
-  file:
-    path: /home/ubuntu/backend
-    state: directory
-
 - name: Extract backend to folder
   become: true
   unarchive:
     src: ~/project/backend.tar.gz
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu
     owner: ubuntu
     group: ubuntu
     mode: 0755
