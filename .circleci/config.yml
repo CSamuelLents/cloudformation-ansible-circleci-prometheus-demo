@@ -377,7 +377,7 @@ jobs:
           command: |
             set -e
             npm --prefix ~/project/backend run build
-            tar -czvf ~/project/backend.tar.gz ~/project/backend
+            tar -czvf backend.tar.gz backend
       - run:
           name: Deploy backend
           command: |
@@ -507,5 +507,6 @@ workflows:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [deploy-backend]
+          # requires: [cloudfront-update]
