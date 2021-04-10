@@ -473,10 +473,10 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend:
-          context: 'Slack Integration'
-      - build-backend:
-          context: 'Slack Integration'
+      # - build-frontend:
+      #     context: 'Slack Integration'
+      # - build-backend:
+      #     context: 'Slack Integration'
       # - test-frontend:
       #     requires: [build-frontend]
       #     context: 'Slack Integration'
@@ -491,21 +491,21 @@ workflows:
       #     context: 'Slack Integration'
       - deploy-infrastructure:
           # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          requires: [build-frontend, build-backend]
+          # requires: [build-frontend, build-backend]
           filters:
             branches:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [deploy-infrastructure, run-migrations]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [deploy-infrastructure, run-migrations]
       - deploy-backend:
-          requires: [configure-infrastructure, run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+          requires: [configure-infrastructure] #, run-migrations
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
+      # - cleanup:
+      #     requires: [cloudfront-update]

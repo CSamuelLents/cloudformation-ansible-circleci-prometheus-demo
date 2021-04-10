@@ -9,7 +9,9 @@
   become: yes
   unarchive:
     src: ~/project/backend.tar.gz
-    dest: ~/
+    dest: /home/ubuntu/
+    owner: ubuntu
+    group: ubuntu
     list_files: yes
     mode: 0755
 
@@ -17,15 +19,12 @@
   shell: ls
 
 - name: Debug file path 2
-  shell: ls ~/
+  shell: ls backend
 
 - name: Debug env
   ansible.builtin.debug:
     msg:
       - "TYPEORM_HOST: {{ lookup('env', 'TYPEORM_HOST') }}"
-
-- name: Debug file path 3
-  shell: ls backend
 
 - name: Execute Node application
   shell: pm2 startOrGracefulReload /home/ubuntu/ecosystem.config.js
