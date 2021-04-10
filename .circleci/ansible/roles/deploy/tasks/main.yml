@@ -5,34 +5,27 @@
     dest: /home/ubuntu/ecosystem.config.js
     backup: yes
 
-- name: Extract backend to folder
-  become: true
+- name: Extract tarball
+  become: yes
   unarchive:
     src: ~/project/backend.tar.gz
-    dest: /home/ubuntu
-    owner: ubuntu
-    group: ubuntu
-    mode: 0755
-
-- name: Extract backend to folder
-  become: true
-  unarchive:
-    src: ~/project/backend.tar.gz
-    dest: /home/ubuntu
-    owner: ubuntu
-    group: ubuntu
+    dest: ~/
+    list_files: yes
     mode: 0755
 
 - name: Debug file path 1
   shell: ls
 
 - name: Debug file path 2
-  shell: ls backend
+  shell: ls ~/
 
 - name: Debug env
   ansible.builtin.debug:
     msg:
       - "TYPEORM_HOST: {{ lookup('env', 'TYPEORM_HOST') }}"
+
+- name: Debug file path 3
+  shell: ls backend
 
 - name: Execute Node application
   shell: pm2 startOrGracefulReload /home/ubuntu/ecosystem.config.js
