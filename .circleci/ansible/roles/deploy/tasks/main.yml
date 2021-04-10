@@ -9,10 +9,9 @@
   become: yes
   unarchive:
     src: ~/project/backend.tar.gz
-    dest: /
+    dest: /home/ubuntu/
     owner: ubuntu
     group: ubuntu
-    list_files: yes
     mode: 0755
 
 - name: Debug file path 1
