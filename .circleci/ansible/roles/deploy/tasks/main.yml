@@ -1,9 +1,9 @@
 ---
-# - name: Copy pm2 config
-#   copy:
-#     src: ecosystem.config.js
-#     dest: /home/ubuntu/ecosystem.config.js
-#     backup: yes
+- name: Copy pm2 config
+  copy:
+    src: ecosystem.config.js
+    dest: /home/ubuntu/ecosystem.config.js
+    backup: yes
 
 - name: Extract tarball
   become: yes
@@ -13,15 +13,16 @@
     owner: ubuntu
     group: ubuntu
     mode: 0755
-# - name: Execute Node application
-#   shell: pm2 startOrGracefulReload /home/ubuntu/ecosystem.config.js
-#   environment:
-#     ENVIRONMENT: production
-#     TYPEORM_CONNECTION: postgres
-#     TYPEORM_ENTITIES: /home/ubuntu/backend/src/modules/domain/**/*.entity.ts
-#     TYPEORM_MIGRATIONS_DIR: /home/ubuntu/backend/src/migrations
-#     TYPEORM_PORT: 5532
-#     TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
-#     TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
-#     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
-#     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+
+- name: Execute Node application
+  shell: pm2 startOrGracefulReload /home/ubuntu/ecosystem.config.js
+  environment:
+    ENVIRONMENT: production
+    TYPEORM_CONNECTION: postgres
+    TYPEORM_ENTITIES: /home/ubuntu/backend/src/modules/domain/**/*.entity.ts
+    TYPEORM_MIGRATIONS_DIR: /home/ubuntu/backend/src/migrations
+    TYPEORM_PORT: 5532
+    TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+    TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
