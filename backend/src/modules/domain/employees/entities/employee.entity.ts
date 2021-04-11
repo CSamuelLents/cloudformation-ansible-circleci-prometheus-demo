@@ -1,9 +1,8 @@
-// @ts-nocheck
 import * as moment from 'moment-timezone';
 import { AggregateRoot } from '../../../common/entities';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { CreateEmployee } from '../commands/create-employee.command';
-import { EmployeeCreated } from '../events/employee-created.event';
+// import { EmployeeCreated } from '../events/employee-created.event';
 
 @Entity()
 export class Employee extends AggregateRoot<number> {
@@ -23,15 +22,17 @@ export class Employee extends AggregateRoot<number> {
       this.salary = +params.salary;
       this.salaryType = getSalaryTypeFromEnum(params.salaryType);
       this.secondLastName = params.secondLastName;
-      this.startDate = getDateFromString(params.startDate);
+      this.startDate = (getDateFromString(params.startDate) as unknown) as Date;
       this.tags = params.tags;
       this.city = params.city;
       this.country = params.country;
       this.displayName = params.displayName;
-      this.effectiveDate = getDateFromString(params.effectiveDate);
+      this.effectiveDate = (getDateFromString(
+        params.effectiveDate,
+      ) as unknown) as Date;
       this.companyEmail = params.companyEmail;
       this.bankName = params.bankName;
-      this.birthdate = getDateFromString(params.birthdate);
+      this.birthdate = (getDateFromString(params.birthdate) as unknown) as Date;
     }
 
     // this.apply(new EmployeeCreated(this.id, this.firstName));
