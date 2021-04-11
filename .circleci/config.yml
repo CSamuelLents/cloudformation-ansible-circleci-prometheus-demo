@@ -35,7 +35,7 @@ commands:
             fi
 
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-            # aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -217,14 +217,14 @@ jobs:
               --tags project="udapeople" \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      # - run:
-      #     name: Ensure front-end infrastructure exist
-      #     command: |
-      #       aws cloudformation deploy \
-      #         --template-file ~/project/.circleci/files/frontend.yml \
-      #         --tags project="udapeople" \
-      #         --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file ~/project/.circleci/files/frontend.yml \
+              --tags project="udapeople" \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Add backend ip to ansible inventory
           command: |
@@ -369,7 +369,7 @@ jobs:
           command: |
             BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
                --request GET https://api.memstash.io/values/backend-ip)
-            export API_URL=https://"$BACKEND_IP":3030
+            export API_URL=http://"$BACKEND_IP":3030
       - run:
           name: Backend smoke test.
           command: |
@@ -440,31 +440,30 @@ jobs:
               fi
 
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
-              # aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
             fi
 
 workflows:
   default:
     jobs:
-      # - build-frontend:
-      #     context: 'Slack Integration'
-      # - build-backend:
-      #     context: 'Slack Integration'
-      # - test-frontend:
-      #     requires: [build-frontend]
-      #     context: 'Slack Integration'
-      # - test-backend:
-      #     requires: [build-backend]
-      #     context: 'Slack Integration'
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      #     context: 'Slack Integration'
-      # - scan-backend:
-      #     requires: [build-backend]
-      #     context: 'Slack Integration'
+      - build-frontend:
+          context: 'Slack Integration'
+      - build-backend:
+          context: 'Slack Integration'
+      - test-frontend:
+          requires: [build-frontend]
+          context: 'Slack Integration'
+      - test-backend:
+          requires: [build-backend]
+          context: 'Slack Integration'
+      - scan-frontend:
+          requires: [build-frontend]
+          context: 'Slack Integration'
+      - scan-backend:
+          requires: [build-backend]
+          context: 'Slack Integration'
       - deploy-infrastructure:
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # requires: [build-frontend, build-backend]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
@@ -472,14 +471,13 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [deploy-infrastructure, run-migrations]
+      - deploy-frontend:
+          requires: [deploy-infrastructure, run-migrations]
       - deploy-backend:
-          requires: [configure-infrastructure] #, run-migrations
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
+          requires: [configure-infrastructure, run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
       - cleanup:
-          requires: [deploy-backend]
-          # requires: [cloudfront-update]
+          requires: [cloudfront-update]

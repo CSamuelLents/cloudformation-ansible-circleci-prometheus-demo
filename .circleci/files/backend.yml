@@ -25,6 +25,9 @@ Resources:
           FromPort: 9100
           ToPort: 9100
           CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub udapeople-backend-${ID}
 
   EC2Instance:
     Type: AWS::EC2::Instance
