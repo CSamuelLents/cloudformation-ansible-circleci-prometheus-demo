@@ -21,7 +21,7 @@
     TYPEORM_CONNECTION: postgres
     TYPEORM_ENTITIES: /home/ubuntu/backend/src/modules/domain/**/*.entity.ts
     TYPEORM_MIGRATIONS_DIR: /home/ubuntu/backend/src/migrations
-    TYPEORM_PORT: 5532
+    TYPEORM_PORT: 5432
     TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
     TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
