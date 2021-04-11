@@ -226,16 +226,14 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
-          name: Add backend ip to ansible inventory
+          name: Add backend ip to ansible inventory and save to memstash
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
               --query "Reservations[*].Instances[*].{PublicIP:PublicIpAddress}"  \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
             echo "$BACKEND_IP" >> ~/project/.circleci/ansible/inventory.txt
-      - run:
-          name: Save backend ip to memstash
-          command: |
+
             curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
@@ -269,6 +267,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - restore_cache:
           keys:
             - backend-deps-{{ checksum "backend/package-lock.json" }}
@@ -280,13 +280,11 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            set -e
             npm --prefix ~/project/backend install
             npm --prefix ~/project/backend run premigrations
             export MIGRATION_OUTPUT=$(npm --prefix ~/project/backend run migrations | grep -q "has been executed successfully" ; echo $?)
-      - run:
-          name: Send migration results to memstash
-          command: |
+            echo "$MIGRATION_OUTPUT"
+
             curl -H "Content-Type: text/plain" \
               -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
               --request PUT \
@@ -297,6 +295,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - aws/setup:
           profile-name: default
       - restore_cache:
@@ -308,16 +308,12 @@ jobs:
             set -e
             npm --prefix ~/project/frontend install
       - run:
-          name: Get backend url for build env
-          command: |
-            BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
-               --request GET https://api.memstash.io/values/backend-ip)
-            export API_URL=https://"$BACKEND_IP":3000
-            echo "${API_URL}"
-      - run:
           name: Build frontend
           command: |
             set -e
+            BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" --request GET https://api.memstash.io/values/backend-ip)
+            export API_URL=https://"$BACKEND_IP":3000
+            echo "${API_URL}"
             npm --prefix ~/project/frontend run build
       - run:
           name: Deploy frontend
@@ -365,21 +361,20 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get backend URL
+          name: Backend smoke test.
           command: |
             BACKEND_IP=$(curl -H "token: faaf85f2-aae3-4bc1-9f30-09e897658cd8" \
                --request GET https://api.memstash.io/values/backend-ip)
-            export API_URL=http://"$BACKEND_IP":3030
-      - run:
-          name: Backend smoke test.
-          command: |
-            echo $(curl -s "$API_URL/api/status")
+            API_URL=http://"$BACKEND_IP":3030
 
-            if curl -s "$API_URL/api/status" | grep "error" ; then
-              echo "Failed backend smoke test"
-              exit 1
-            else
+            echo "$API_URL"
+
+            if curl -s "$API_URL/api/status" | grep "ok" ; then
               echo "Passed backend smoke test"
+            else
+              echo "Failed backend smoke test"
+              echo $(curl -s "$API_URL/api/status")
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -423,11 +418,11 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports \
+            OLD_WORKFLOW_ID=$(aws cloudformation list-exports \
               --query "Exports[?Name=='WorkflowID'].Value" \
               --no-paginate --output text)
 
-            export STACKS=$(aws cloudformation list-stacks \
+            STACKS=$(aws cloudformation list-stacks \
               --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE \
               --no-paginate --output text)
@@ -479,5 +474,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
