@@ -195,7 +195,7 @@ jobs:
           name: Scan backend for vulnerabilities
           command: |
             set -e
-            # npm --prefix ~/project/backend audit --audit-level=critical
+            npm --prefix ~/project/backend audit --audit-level=critical
       - slack/notify:
           event: fail
           mentions: '@here'
@@ -280,7 +280,6 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            npm --prefix ~/project/backend install
             npm --prefix ~/project/backend run premigrations
             export MIGRATION_OUTPUT=$(npm --prefix ~/project/backend run migrations | grep -q "has been executed successfully" ; echo $?)
             echo "$MIGRATION_OUTPUT"
@@ -474,5 +473,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
