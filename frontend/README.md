@@ -37,63 +37,59 @@ See also: [react-mobx-typescript-boilerplate](https://github.com/rokoroku/react-
 
 ## Setup
 
-```
-$ npm install
+```bash
+npm install
 ```
 
 ## Running
 
-```
-$ npm start
+```bash
+npm start
 ```
 
 ## Build
 
-```
-$ npm run build
+```bash
+npm run build
 ```
 
 ## Prettier
 
+```bash
+npm run prettier
 ```
-$ npm run prettier
-```
 
-# License
+## Glee-Specific Config
 
-MIT
-
-# Glee-Specific Config
-
-## Connecting to Backend
+### Connecting to Backend
 
 During build, CRA will import the backend API url from `API_URL` which you can use via `process.env.API_URL`. To change the value of this locally, add that as an environment variable and set it to whatever you need. You can also create a `.env` file, of course.
 
 Example:
 
-```
+```env
 API_URL=http://localhost:3030
 ```
 
-## Relative Paths in HTML
+### Relative Paths in HTML
 
 When deploying to a folder instead of the root on a web server, you need paths to resources to be relative (ex: `./scripts` instead of `/scripts`). To force webpack to generate relative paths, add a `FRONTEND_URL` to your environment with the url to your application.
 
-## Logging
+### Logging
 
 We are using Loggly to track log messages remotely. If you want to send your logs to Loggly for some reason, you should configure the following variables in your environment (either with `.env` or in your operating system):
 
-```
+```env
 LOGGLY_SUBDOMAIN=yoursubdomain
 LOGGLY_TOKEN=yourlogglytoken
 LOGGLY_LEVEL=info
 ```
 
-## E2E Tests with Ghost Inspector
+### E2E Tests with Ghost Inspector
 
 You will need the following env vars for Ghost Inspector tests to run in CI/CD:
 
-```
+```env
 GHOST_SUITE_ID=5bdb36e08faf2b12926e7cf4
 GHOST_API_KEY=da6f8fa10c129df055519e634530b531d3c068e5
 ```

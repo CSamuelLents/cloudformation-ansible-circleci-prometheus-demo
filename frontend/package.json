@@ -15,7 +15,6 @@
     "build": "webpack --mode development --progress --colors",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
-  "license": "MIT",
   "devDependencies": {
     "@types/classnames": "2.2.9",
     "@types/enzyme": "^3.10.2",
